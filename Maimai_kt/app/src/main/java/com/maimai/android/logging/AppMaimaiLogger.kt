@@ -9,23 +9,21 @@ import javax.inject.Singleton
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import org.json.JSONArray
+import org.json.JSONObject
 import timber.log.Timber
 
 /**
- * App 层日志适配器。
+ * Android-side logger adapter.
  *
- * maimai 客户端库只认识 MaimaiLogger 接口，不直接依赖 Android。
- * 这里把 MaimaiLogger 接到 Timber，同时也保存一份日志给页面底部的日志面板显示。
+ * The core maimai client only knows the MaimaiLogger interface.
+ * This adapter writes logs to Timber/Logcat and also keeps recent log entries
+ * for the log panel at the bottom of the page.
  */
 @Singleton
 class AppMaimaiLogger @Inject constructor() : MaimaiLogger {
     private val formatter = SimpleDateFormat("HH:mm:ss", Locale.US)
 
-    /**
-     * 页面日志列表。
-     *
-     * MutableStateFlow 可以被 Activity collect，一旦有新日志，页面会自动刷新。
-     */
     private val _logs = MutableStateFlow<List<String>>(emptyList())
     val logs: StateFlow<List<String>> = _logs
 
@@ -39,9 +37,6 @@ class AppMaimaiLogger @Inject constructor() : MaimaiLogger {
         append("ERROR", if (throwable == null) message else "$message: ${throwable.message}")
     }
 
-    /**
-     * App 自己使用的信息日志。MaimaiLogger 接口里没有 info，所以这里额外提供。
-     */
     fun info(message: String) {
         Timber.tag(TAG).i(message)
         append("INFO", message)
@@ -52,14 +47,45 @@ class AppMaimaiLogger @Inject constructor() : MaimaiLogger {
     }
 
     private fun append(level: String, message: String) {
-        val line = "${formatter.format(Date())} [$level] $message"
-
-        // 只保留最近 MAX_LINES 行，避免日志无限增长占内存。
+        val line = "${formatter.format(Date())} [$level] ${prettyPrintJsonPayload(message)}"
         _logs.update { current -> (current + line).takeLast(MAX_LINES) }
+    }
+
+    /**
+     * Turns logs like:
+     *
+     * POST SomeApi request: {"a":1,"b":{"c":2}}
+     *
+     * into:
+     *
+     * POST SomeApi request:
+     * {
+     *   "a" : 1,
+     *   "b" : {
+     *     "c" : 2
+     *   }
+     * }
+     */
+    private fun prettyPrintJsonPayload(message: String): String {
+        val jsonStart = message.indexOfFirst { it == '{' || it == '[' }
+        if (jsonStart < 0) return message
+
+        val prefix = message.substring(0, jsonStart).trimEnd()
+        val jsonText = message.substring(jsonStart).trim()
+        val prettyJson = runCatching {
+            when (jsonText.firstOrNull()) {
+                '{' -> JSONObject(jsonText).toString(JSON_INDENT)
+                '[' -> JSONArray(jsonText).toString(JSON_INDENT)
+                else -> jsonText
+            }
+        }.getOrNull() ?: return message
+
+        return if (prefix.isBlank()) prettyJson else "$prefix\n$prettyJson"
     }
 
     private companion object {
         const val TAG = "Maimai"
         const val MAX_LINES = 300
+        const val JSON_INDENT = 2
     }
 }

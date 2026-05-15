@@ -3,17 +3,19 @@ package com.maimai.android.session
 /**
  * 主页面的完整 UI 状态。
  *
- * Android UI 最好由一个明确的状态对象驱动：
- * - Controller 修改 ConsoleUiState。
- * - Activity 观察状态并刷新控件。
+ * 在 MVVM 中，ViewModel 不应该直接拿 Activity 或 Button 来改界面。
+ * 更推荐的方式是：
+ * 1. ViewModel 修改 ConsoleUiState。
+ * 2. Activity 观察 ConsoleUiState。
+ * 3. Activity 根据状态刷新 TextView、Button、ProgressBar。
  *
- * 这样可以减少“某个按钮忘记禁用”“某个文本忘记刷新”之类的问题。
+ * 这样数据流是单向的，排查问题会简单很多。
  */
 data class ConsoleUiState(
     /** 用户输入的二维码字符串。 */
     val qrCode: String = "",
 
-    /** 当前是否正在执行登录、请求或 logout。busy=true 时按钮会被禁用。 */
+    /** 当前是否正在执行登录或业务请求。busy=true 时按钮会被禁用。 */
     val busy: Boolean = false,
 
     /** 当前是否持有有效 LoginSession。 */

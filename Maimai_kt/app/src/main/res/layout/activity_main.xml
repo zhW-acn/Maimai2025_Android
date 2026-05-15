@@ -1,247 +1,271 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    主页面布局。
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    外层使用 ScrollView：小屏手机上内容可能放不下，需要上下滚动。
-    内层使用 ConstraintLayout：控件之间用约束连接，后续调整布局会比多层 LinearLayout 更灵活。
--->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rootScroll"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
+    <data>
+        <import type="android.view.View" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+        <variable
+            name="viewModel"
+            type="com.maimai.android.session.MaimaiConsoleViewModel" />
+
+        <variable
+            name="state"
+            type="com.maimai.android.session.ConsoleUiState" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/rootScroll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <!-- 页面标题。 -->
-        <TextView
-            android:id="@+id/titleText"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Maimai Console"
-            android:textColor="#102A26"
-            android:textSize="26sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- 页面副标题，告诉用户这个工具的会话策略。 -->
-        <TextView
-            android:id="@+id/subtitleText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="登录后执行一个操作，完成后自动 logout。"
-            android:textColor="#586662"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/titleText" />
-
-        <!-- 二维码输入区标题。 -->
-        <TextView
-            android:id="@+id/qrTitle"
-            style="@style/ConsoleSectionTitle"
-            android:text="二维码"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/subtitleText" />
-
-        <!-- 用户粘贴 SGWCMAID 二维码字符串的输入框。 -->
-        <EditText
-            android:id="@+id/qrInput"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:hint="粘贴 SGWCMAID 二维码字符串"
-            android:inputType="textMultiLine|textNoSuggestions"
-            android:maxLines="6"
-            android:minLines="4"
-            android:padding="12dp"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/qrTitle" />
-
-        <!-- 登录按钮：读取输入框二维码，调用 loginByQr。 -->
-        <Button
-            android:id="@+id/loginButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="登录"
-            app:layout_constraintEnd_toStartOf="@id/logoutButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/qrInput" />
-
-        <!-- 手动登出按钮：用户想离开或取消操作时使用。 -->
-        <Button
-            android:id="@+id/logoutButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Logout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/loginButton"
-            app:layout_constraintTop_toBottomOf="@id/qrInput" />
-
-        <!-- 会话状态区域。 -->
-        <TextView
-            android:id="@+id/sessionTitle"
-            style="@style/ConsoleSectionTitle"
-            android:text="会话状态"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/loginButton" />
-
-        <!-- 下面这些 include 复用同一个 label/value 行布局。 -->
-        <include
-            android:id="@+id/statusRow"
-            layout="@layout/view_console_value_row"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/sessionTitle" />
-
-        <include
-            android:id="@+id/userIdRow"
-            layout="@layout/view_console_value_row"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/statusRow" />
-
-        <include
-            android:id="@+id/timestampRow"
-            layout="@layout/view_console_value_row"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/userIdRow" />
-
-        <include
-            android:id="@+id/cookieRow"
-            layout="@layout/view_console_value_row"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/timestampRow" />
-
-        <include
-            android:id="@+id/tokenRow"
-            layout="@layout/view_console_value_row"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cookieRow" />
-
-        <!-- 错误提示区域。默认隐藏，出错时由 MainActivity 显示。 -->
-        <TextView
-            android:id="@+id/errorText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="#B3261E"
-            android:textSize="14sp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tokenRow" />
-
-        <!-- 忙碌中的进度圈。busy=true 时显示。 -->
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/errorText" />
-
-        <!-- 操作区：第一版先放三个示例操作。 -->
-        <TextView
-            android:id="@+id/actionTitle"
-            style="@style/ConsoleSectionTitle"
-            android:text="操作"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/progress" />
-
-        <Button
-            android:id="@+id/uploadButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="上传示例成绩"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/actionTitle" />
-
-        <Button
-            android:id="@+id/unlockButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="解锁示例 Master"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/uploadButton" />
-
-        <Button
-            android:id="@+id/versionButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="修改版本"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/unlockButton" />
-
-        <!-- 日志标题和清空按钮。 -->
-        <TextView
-            android:id="@+id/logTitle"
-            style="@style/ConsoleSectionTitle"
-            android:layout_width="0dp"
-            android:text="日志"
-            app:layout_constraintEnd_toStartOf="@id/clearLogsButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/versionButton" />
-
-        <Button
-            android:id="@+id/clearLogsButton"
-            android:layout_width="96dp"
-            android:layout_height="wrap_content"
-            android:text="清空"
-            app:layout_constraintBottom_toBottomOf="@id/logTitle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/logTitle" />
-
-        <!-- 页面内日志面板。Logcat 里也会有同样的 Timber 日志。 -->
-        <ScrollView
-            android:id="@+id/logsScroll"
-            android:layout_width="0dp"
-            android:layout_height="260dp"
-            android:background="#F3F6F4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/logTitle">
+            android:padding="16dp">
 
             <TextView
-                android:id="@+id/logsText"
-                android:layout_width="match_parent"
+                android:id="@+id/titleText"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:text="Maimai Console"
+                android:textColor="#102A26"
+                android:textSize="26sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/subtitleText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Login, run one action, then auto logout."
+                android:textColor="#586662"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/titleText" />
+
+            <TextView
+                android:id="@+id/qrTitle"
+                style="@style/ConsoleSectionTitle"
+                android:text="QRCode"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/subtitleText" />
+
+            <EditText
+                android:id="@+id/qrInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:enabled="@{!state.busy &amp;&amp; !state.loggedIn}"
+                android:gravity="top"
+                android:hint="Paste SGWCMAID QRCode text"
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:maxLines="6"
+                android:minLines="4"
+                android:onTextChanged="@{(text, start, before, count) -> viewModel.setQrCode(text.toString())}"
                 android:padding="12dp"
-                android:text="暂无日志"
-                android:textColor="#23312E"
-                android:textSize="12sp" />
-        </ScrollView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+                android:text="@{state.qrCode}"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/qrTitle" />
+
+            <Button
+                android:id="@+id/loginButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:enabled="@{!state.busy &amp;&amp; !state.loggedIn &amp;&amp; state.qrCode.length() > 0}"
+                android:onClick="@{() -> viewModel.login()}"
+                android:text="Login"
+                app:layout_constraintEnd_toStartOf="@id/logoutButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/qrInput" />
+
+            <Button
+                android:id="@+id/logoutButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:enabled="@{!state.busy &amp;&amp; state.loggedIn}"
+                android:onClick="@{() -> viewModel.logout()}"
+                android:text="Logout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/loginButton"
+                app:layout_constraintTop_toBottomOf="@id/qrInput" />
+
+            <TextView
+                android:id="@+id/sessionTitle"
+                style="@style/ConsoleSectionTitle"
+                android:text="Session"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/loginButton" />
+
+            <include
+                android:id="@+id/statusRow"
+                layout="@layout/view_console_value_row"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:label='@{"Status"}'
+                app:value="@{state.status}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sessionTitle" />
+
+            <include
+                android:id="@+id/userIdRow"
+                layout="@layout/view_console_value_row"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:label='@{"User ID"}'
+                app:value="@{state.userId}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/statusRow" />
+
+            <include
+                android:id="@+id/timestampRow"
+                layout="@layout/view_console_value_row"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:label='@{"Timestamp"}'
+                app:value="@{state.timestamp}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/userIdRow" />
+
+            <include
+                android:id="@+id/cookieRow"
+                layout="@layout/view_console_value_row"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:label='@{"Cookie"}'
+                app:value="@{state.cookieStatus}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/timestampRow" />
+
+            <include
+                android:id="@+id/tokenRow"
+                layout="@layout/view_console_value_row"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:label='@{"Token"}'
+                app:value="@{state.tokenStatus}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cookieRow" />
+
+            <TextView
+                android:id="@+id/errorText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@{state.lastError}"
+                android:textColor="#B3261E"
+                android:textSize="14sp"
+                android:visibility="@{state.lastError == null ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tokenRow" />
+
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="@{state.busy ? View.VISIBLE : View.GONE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/errorText" />
+
+            <TextView
+                android:id="@+id/actionTitle"
+                style="@style/ConsoleSectionTitle"
+                android:text="Actions"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/progress" />
+
+            <Button
+                android:id="@+id/uploadButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:enabled="@{!state.busy &amp;&amp; state.loggedIn}"
+                android:onClick="@{() -> viewModel.uploadDemoScore()}"
+                android:text="Upload demo score"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/actionTitle" />
+
+            <Button
+                android:id="@+id/unlockButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:enabled="@{!state.busy &amp;&amp; state.loggedIn}"
+                android:onClick="@{() -> viewModel.unlockDemoMaster()}"
+                android:text="Unlock demo Master"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/uploadButton" />
+
+            <Button
+                android:id="@+id/versionButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:enabled="@{!state.busy &amp;&amp; state.loggedIn}"
+                android:onClick="@{() -> viewModel.changeVersion()}"
+                android:text="Change version"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/unlockButton" />
+
+            <TextView
+                android:id="@+id/logTitle"
+                style="@style/ConsoleSectionTitle"
+                android:layout_width="0dp"
+                android:text="Logs"
+                app:layout_constraintEnd_toStartOf="@id/clearLogsButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/versionButton" />
+
+            <Button
+                android:id="@+id/clearLogsButton"
+                android:layout_width="96dp"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> viewModel.clearLogs()}"
+                android:text="Clear"
+                app:layout_constraintBottom_toBottomOf="@id/logTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/logTitle" />
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/logsScroll"
+                android:layout_width="0dp"
+                android:layout_height="260dp"
+                android:background="#F3F6F4"
+                android:fillViewport="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/logTitle">
+
+                <TextView
+                    android:id="@+id/logsText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:text="No logs"
+                    android:textColor="#23312E"
+                    android:textIsSelectable="true"
+                    android:textSize="12sp"
+                    android:typeface="monospace" />
+            </androidx.core.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>
