@@ -1,0 +1,4 @@
+<resources>
+    <!-- 应用名称，会显示在桌面图标和最近任务里。 -->
+    <string name="app_name">Maimai Console</string>
+</resources>

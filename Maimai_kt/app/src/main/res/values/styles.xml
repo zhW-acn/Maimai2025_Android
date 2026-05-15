@@ -1,0 +1,26 @@
+<resources>
+    <!--
+        App 的全局主题。
+        NoActionBar 表示不使用系统默认标题栏，页面内容从顶部自己控制。
+    -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="colorPrimary">#176B5B</item>
+        <item name="colorPrimaryVariant">#0E4F42</item>
+        <item name="colorSecondary">#C5573A</item>
+    </style>
+
+    <!--
+        页面分区标题的公共样式。
+        activity_main.xml 里二维码、会话状态、操作、日志几个标题都复用它。
+    -->
+    <style name="ConsoleSectionTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">18dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:textColor">#173B35</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+</resources>

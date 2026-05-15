@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Android 9 以后默认禁止明文 HTTP。
+
+    Aime 接口目前是 http://ai.sys-allnet.cn/...，不是 https，
+    所以这里单独允许 ai.sys-allnet.cn 使用明文流量。
+
+    注意：不要直接给所有域名开启 cleartextTrafficPermitted，
+    只给确实需要 HTTP 的域名开，风险更小。
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">ai.sys-allnet.cn</domain>
+    </domain-config>
+</network-security-config>
