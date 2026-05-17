@@ -1,6 +1,7 @@
 package com.maimai.android.di
 
 import com.maimai.android.logging.AppMaimaiLogger
+import com.maimai.android.ui.console.session.UpsertDelayMonitor
 import com.maimai.kt.config.ClientConfig
 import com.maimai.kt.log.MaimaiLogger
 import com.maimai.kt.service.MaimaiActions
@@ -43,7 +44,8 @@ object MaimaiModule {
      */
     @Provides
     @Singleton
-    fun provideClientConfig(): ClientConfig = ClientConfig()
+    fun provideClientConfig(upsertDelayMonitor: UpsertDelayMonitor): ClientConfig =
+        ClientConfig(postDelayObserver = upsertDelayMonitor)
 
     /**
      * MaimaiActions 是客户端库的统一入口。

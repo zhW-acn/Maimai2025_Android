@@ -1,6 +1,7 @@
 package com.maimai.android
 
 import android.app.Application
+import com.blankj.utilcode.util.Utils
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
@@ -12,8 +13,12 @@ import timber.log.Timber
  */
 @HiltAndroidApp
 class MaimaiApp : Application() {
+    /**
+     * App 进程启动时初始化全局依赖和日志框架。
+     */
     override fun onCreate() {
         super.onCreate()
+        Utils.init(this)
 
         // DebugTree 会把 Timber 日志输出到 Android Studio Logcat。
         // 只在 debug 包启用，避免正式包输出过多敏感网络信息。

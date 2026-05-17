@@ -1,0 +1,19 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryVariant">@color/color_primary_variant</item>
+        <item name="colorSecondary">@color/color_secondary</item>
+    </style>
+
+    <style name="ConsoleSectionTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">18dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:textColor">@color/console_section_title_text</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+</resources>

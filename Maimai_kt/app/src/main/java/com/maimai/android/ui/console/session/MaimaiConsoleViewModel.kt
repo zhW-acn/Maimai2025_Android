@@ -1,0 +1,497 @@
+package com.maimai.android.ui.console.session
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.blankj.utilcode.util.Utils
+import com.maimai.android.R
+import com.maimai.android.logging.AppMaimaiLogger
+import com.maimai.android.notification.OperationResultNotifier
+import com.maimai.kt.error.MaimaiLoginException
+import com.maimai.kt.payload.CharaDetail
+import com.maimai.kt.payload.MusicDetail
+import com.maimai.kt.service.LoginSession
+import com.maimai.kt.service.MaimaiActions
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+/**
+ * MainActivity 对应的 ViewModel。
+ *
+ * ViewModel 保存界面状态和当前 LoginSession。Activity/XML 只负责展示，
+ * 不直接处理 maimai API 的调用细节。
+ */
+@HiltViewModel
+class MaimaiConsoleViewModel @Inject constructor(
+    private val actions: MaimaiActions,
+    private val logger: AppMaimaiLogger,
+    private val upsertDelayMonitor: UpsertDelayMonitor,
+    private val operationResultNotifier: OperationResultNotifier,
+) : ViewModel() {
+    /**
+     * _state 是 ViewModel 内部可修改的状态。
+     *
+     * 命名上加下划线是 Android 常见写法：提醒自己“这个变量不要暴露给外部直接修改”。
+     */
+    private val _state = MutableStateFlow(initialState())
+
+    /**
+     * state 是暴露给 Activity 的只读状态。
+     *
+     * Activity 只能 collect 它并刷新 UI，不能直接改它，这样数据流会更清晰。
+     */
+    val state: StateFlow<ConsoleUiState> = _state.asStateFlow()
+
+    /**
+     * 当前登录会话。
+     *
+     * LoginSession 里面的 userId、timestamp、cookie、token 会被后续 API 继续使用。
+     * 它属于业务状态，所以放在 ViewModel，不放在 Activity。
+     */
+    private var session: LoginSession? = null
+    private var upsertUserAllCompleted: Boolean = false
+    private var logoutAllowedByTimeout: Boolean = false
+    private var noUpsertLogoutReminderJob: Job? = null
+
+    init {
+        collectUpsertDelayProgress()
+    }
+
+    /**
+     * 更新二维码输入框内容，并清理上一次错误。
+     */
+    fun setQrCode(value: String) {
+        _state.update { it.copy(qrCode = value, lastError = null) }
+    }
+
+    /**
+     * 清空页面日志。
+     */
+    fun clearLogs() {
+        logger.clear()
+    }
+
+    /**
+     * 登录按钮点击后调用。
+     *
+     * Activity 不再自己 launch 协程，而是把事件交给 ViewModel。
+     * viewModelScope 会在 ViewModel 销毁时自动取消，避免页面关闭后请求还一直跑。
+     */
+    fun login() {
+        val qrCode = state.value.qrCode.trim()
+        if (qrCode.isBlank()) {
+            setError(text(R.string.error_qrcode_required))
+            return
+        }
+
+        viewModelScope.launch {
+            runBusy(text(R.string.status_logging_in)) {
+                logger.info(text(R.string.log_login_start))
+                val loginSession = actions.sessions.loginByQr(qrCode)
+
+                session = loginSession
+                upsertUserAllCompleted = false
+                logoutAllowedByTimeout = false
+                scheduleNoUpsertLogoutReminder(loginSession.userId)
+
+                logger.info(text(R.string.log_login_success, loginSession.userId))
+
+                _state.update {
+                    it.copy(
+                        busy = false,
+                        loggedIn = true,
+                        upsertUserAllCompleted = false,
+                        logoutAllowedByTimeout = false,
+                        status = text(R.string.status_logged_in_waiting_upsert),
+                        userId = loginSession.userId.toString(),
+                        timestamp = loginSession.timestamp.toString(),
+                        cookieStatus = loginSession.cookie.toString(),
+                        tokenStatus = loginSession.token,
+                        upsertStatus = text(R.string.status_upsert_not_completed_cannot_logout),
+                        upsertWaiting = false,
+                        upsertWaitRemainingSeconds = 0,
+                        upsertWaitTotalSeconds = 0,
+                        upsertWaitProgress = 0,
+                        upsertWaitText = "",
+                        lastError = null,
+                    )
+                }
+            }
+        }
+    }
+
+    /**
+     * 手动 logout。
+     *
+     * 重要业务规则：必须先成功执行 upsertUserAll，才能 logout。
+     */
+    fun logout() {
+        val activeSession = session
+        if (activeSession == null) {
+            markLoggedOut(text(R.string.status_not_logged_in))
+            return
+        }
+        if (!upsertUserAllCompleted && !logoutAllowedByTimeout) {
+            setError(text(R.string.error_logout_not_allowed))
+            logger.info(text(R.string.log_logout_rejected_no_upsert))
+            return
+        }
+
+        viewModelScope.launch {
+            runLogout(activeSession, text(R.string.status_logged_out))
+        }
+    }
+
+    /**
+     * 用户点击“未 upsert 超时提醒”通知后执行 logout。
+     *
+     * 这个入口会绕过手动 logout 的 upsertUserAll 检查，因为它只在超时提醒通知中使用。
+     */
+    fun logoutAfterNoUpsertTimeout() {
+        val activeSession = session
+        if (activeSession == null) {
+            operationResultNotifier.cancelNoUpsertLogoutReminder()
+            markLoggedOut(text(R.string.status_not_logged_in))
+            return
+        }
+        if (upsertUserAllCompleted) {
+            operationResultNotifier.cancelNoUpsertLogoutReminder()
+            return
+        }
+        logoutAllowedByTimeout = true
+
+        viewModelScope.launch {
+            logger.info(text(R.string.log_no_upsert_timeout_logout_start))
+            runLogout(activeSession, text(R.string.status_no_upsert_timeout_logged_out))
+        }
+    }
+
+    /**
+     * 根据弹窗表单传入的歌曲成绩上传 upsertUserAll。
+     */
+    fun uploadScore(
+        music: MusicDetail,
+        charaDetail: List<CharaDetail> = CharaDetail.defaultList()
+    ) {
+        runOperationInViewModel(text(R.string.action_upload_demo_score)) { activeSession ->
+            actions.scores.upload(
+                userId = activeSession.userId,
+                loginTimestamp = activeSession.timestamp,
+                loginResult = activeSession.login,
+                music = music,
+                charaDetail
+            )
+        }
+    }
+
+    /**
+     * 演示用：执行版本变更 API。
+     */
+    /**
+     * 购入指定类型的 Ticket。
+     *
+     * TicketService.buy 调用的是 upsertChargeLog，不是 upsertUserAll。
+     * 所以这里不会自动 logout，避免违反“未 upsertUserAll 前不要 logout”的业务规则。
+     */
+    fun buyTicket(ticketType: Int = 6) {
+        val activeSession = session
+        if (activeSession == null) {
+            setError(text(R.string.error_login_required))
+            return
+        }
+
+        viewModelScope.launch {
+            runBusy(text(R.string.status_operation_running, text(R.string.action_charge_ticket))) {
+                logger.info(text(R.string.log_ticket_buy_start, ticketType))
+                actions.tickets.buy(
+                    userId = activeSession.userId,
+                    ticketType = ticketType,
+                    cookie = activeSession.cookie,
+                )
+                logger.info(text(R.string.log_ticket_buy_success, ticketType))
+                runLogout(activeSession, text(R.string.status_operation_completed_auto_logout))
+            }
+        }
+    }
+
+    fun changeVersion() {
+        runOperationInViewModel(text(R.string.action_change_version)) { activeSession ->
+            actions.versions.change(
+                activeSession.userId,
+                activeSession.timestamp,
+                activeSession.login,
+            )
+        }
+    }
+
+    /**
+     * 在 ViewModel 中执行业务操作。
+     *
+     * 这种方式最直接：页面日志、倒计时、进度条都和真实 API 调用在同一个协程里。
+     * 注意：如果 App 被系统切后台冻结，ViewModel 里的协程也可能暂停。
+     */
+    private fun runOperationInViewModel(
+        name: String,
+        block: suspend (LoginSession) -> Unit,
+    ) {
+        val activeSession = session
+        if (activeSession == null) {
+            setError(text(R.string.error_login_required))
+            return
+        }
+
+        viewModelScope.launch {
+            var upsertSucceeded = false
+            try {
+                logger.info(text(R.string.log_operation_start, name))
+                _state.update {
+                    it.copy(
+                        busy = true,
+                        status = text(R.string.status_operation_running, name),
+                        lastError = null,
+                    )
+                }
+
+                block(activeSession)
+                upsertSucceeded = true
+                upsertUserAllCompleted = true
+                logoutAllowedByTimeout = false
+                cancelNoUpsertLogoutReminder()
+                logger.info(text(R.string.log_operation_success, name))
+
+                _state.update {
+                    it.copy(
+                        upsertUserAllCompleted = true,
+                        logoutAllowedByTimeout = false,
+                        upsertStatus = text(R.string.status_upsert_completed_prepare_logout),
+                    )
+                }
+
+                val logoutSucceeded =
+                    runLogout(activeSession, text(R.string.status_operation_completed_auto_logout))
+                if (logoutSucceeded) {
+                    operationResultNotifier.notifySuccess(
+                        title = text(R.string.notification_operation_success_title, name),
+                        message = text(R.string.notification_operation_success_message),
+                    )
+                } else {
+                    operationResultNotifier.notifyFailure(
+                        title = text(R.string.notification_logout_failed_title, name),
+                        message = text(R.string.notification_logout_failed_message),
+                    )
+                }
+            } catch (error: Throwable) {
+                val message = error.message ?: error::class.java.simpleName
+                logger.error(text(R.string.log_operation_failed, name), error)
+                setError(message)
+                operationResultNotifier.notifyFailure(
+                    title = text(R.string.notification_operation_failed_title, name),
+                    message = message,
+                )
+            } finally {
+                if (!upsertSucceeded) {
+                    logger.info(text(R.string.log_operation_no_upsert_skip_logout, name))
+                    _state.update { it.copy(busy = false) }
+                }
+            }
+        }
+    }
+
+    private suspend fun runLogout(activeSession: LoginSession, loggedOutStatus: String): Boolean {
+        var succeeded = false
+        try {
+            cancelNoUpsertLogoutReminder()
+            logger.info(text(R.string.log_logout_start, activeSession.userId))
+            actions.sessions.logout(activeSession.userId, activeSession.cookie)
+            succeeded = true
+            logger.info(text(R.string.log_logout_success))
+        } catch (error: Throwable) {
+            val message = error.message ?: error::class.java.simpleName
+            logger.error(text(R.string.log_logout_failed), error)
+            setError(message)
+        } finally {
+            session = null
+            upsertUserAllCompleted = false
+            logoutAllowedByTimeout = false
+            val finalStatus =
+                if (succeeded) loggedOutStatus else text(R.string.status_logout_failed_local_session_cleared)
+            markLoggedOut(finalStatus)
+        }
+        return succeeded
+    }
+
+    /**
+     * 监听核心库真实等待的倒计时。
+     *
+     * 这里不自己 delay，避免 UI 倒计时和核心 API 的真实等待脱节。
+     */
+    private fun collectUpsertDelayProgress() {
+        viewModelScope.launch {
+            upsertDelayMonitor.progress.collect { progress ->
+                val wasWaiting = state.value.upsertWaiting
+                if (progress == null && wasWaiting) {
+                    operationResultNotifier.notifyUpsertPosting()
+                } else if (progress != null) {
+                    operationResultNotifier.notifyUpsertProgress(progress)
+                }
+
+                _state.update { current ->
+                    if (progress == null) {
+                        current.copy(
+                            upsertWaiting = false,
+                            upsertStatus = if (current.upsertWaiting) text(R.string.status_sending_upsert_post) else current.upsertStatus,
+                            upsertWaitRemainingSeconds = 0,
+                            upsertWaitTotalSeconds = 0,
+                            upsertWaitProgress = if (current.upsertWaitProgress > 0) 100 else 0,
+                            upsertWaitText = "",
+                        )
+                    } else {
+                        current.copy(
+                            upsertWaiting = true,
+                            upsertStatus = text(
+                                R.string.status_waiting_post_remaining,
+                                progress.remainingSeconds
+                            ),
+                            upsertWaitRemainingSeconds = progress.remainingSeconds,
+                            upsertWaitTotalSeconds = progress.totalSeconds,
+                            upsertWaitProgress = progress.percent,
+                            upsertWaitText = text(
+                                R.string.upsert_wait_text,
+                                progress.label,
+                                progress.remainingSeconds
+                            ),
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 包装需要显示 busy 的操作。
+     *
+     * 进入时 busy=true，结束时 busy=false。
+     * Activity 会根据 busy 禁用按钮并显示 ProgressBar。
+     */
+    private suspend fun runBusy(label: String, block: suspend () -> Unit) {
+        _state.update { it.copy(busy = true, status = label, lastError = null) }
+        try {
+            block()
+        } catch (error: MaimaiLoginException) {
+            val message = when (error.code) {
+                100 -> text(R.string.error_login_playing)
+                102 -> text(R.string.error_qrcode_refresh_required)
+                else -> error.message ?: text(R.string.error_login_failed)
+            }
+            logger.error(message, error)
+            setError(message)
+        } catch (error: Throwable) {
+            val message = error.message ?: error::class.java.simpleName
+            logger.error(text(R.string.error_operation_failed), error)
+            setError(message)
+        } finally {
+            _state.update { it.copy(busy = false) }
+        }
+    }
+
+    /**
+     * 记录错误并让页面退出 busy 状态。
+     */
+    private fun setError(message: String) {
+        _state.update {
+            it.copy(
+                busy = false,
+                status = text(R.string.status_failed),
+                lastError = message
+            )
+        }
+    }
+
+    /**
+     * 登录后 60 秒仍没有 upsertUserAll，就发通知提醒用户点击 logout。
+     */
+    private fun scheduleNoUpsertLogoutReminder(userId: Long) {
+        noUpsertLogoutReminderJob?.cancel()
+        noUpsertLogoutReminderJob = viewModelScope.launch {
+            delay(NO_UPSERT_LOGOUT_REMINDER_DELAY_MILLIS)
+
+            val stillSameSession = session?.userId == userId
+            if (stillSameSession && !upsertUserAllCompleted) {
+                logoutAllowedByTimeout = true
+                logger.info(text(R.string.log_no_upsert_timeout_reminder))
+                operationResultNotifier.notifyNoUpsertLogoutReminder()
+                _state.update {
+                    it.copy(
+                        logoutAllowedByTimeout = true,
+                        upsertStatus = text(R.string.status_no_upsert_timeout_logout_allowed),
+                    )
+                }
+            }
+        }
+    }
+
+    /**
+     * 取消“登录后未 upsert”提醒任务和对应通知。
+     */
+    private fun cancelNoUpsertLogoutReminder() {
+        noUpsertLogoutReminderJob?.cancel()
+        noUpsertLogoutReminderJob = null
+        operationResultNotifier.cancelNoUpsertLogoutReminder()
+    }
+
+    /**
+     * 把本地状态恢复成“未登录”。
+     */
+    private fun markLoggedOut(status: String) {
+        cancelNoUpsertLogoutReminder()
+        _state.update {
+            it.copy(
+                busy = false,
+                loggedIn = false,
+                upsertUserAllCompleted = false,
+                logoutAllowedByTimeout = false,
+                status = status,
+                userId = EMPTY_VALUE,
+                timestamp = EMPTY_VALUE,
+                cookieStatus = text(R.string.status_none),
+                tokenStatus = text(R.string.status_none),
+                upsertStatus = text(R.string.status_upsert_not_completed),
+                upsertWaiting = false,
+                upsertWaitRemainingSeconds = 0,
+                upsertWaitTotalSeconds = 0,
+                upsertWaitProgress = 0,
+                upsertWaitText = "",
+            )
+        }
+    }
+
+    /**
+     * 创建页面第一次显示时使用的默认状态。
+     */
+    private fun initialState(): ConsoleUiState =
+        ConsoleUiState(
+            status = text(R.string.status_not_logged_in),
+            userId = EMPTY_VALUE,
+            timestamp = EMPTY_VALUE,
+            cookieStatus = text(R.string.status_none),
+            tokenStatus = text(R.string.status_none),
+            upsertStatus = text(R.string.status_upsert_not_completed),
+        )
+
+    /**
+     * 读取 string 资源，避免在 ViewModel 中散落硬编码中文。
+     */
+    private fun text(resId: Int, vararg args: Any): String =
+        Utils.getApp().getString(resId, *args)
+
+    private companion object {
+        const val EMPTY_VALUE = "-"
+        const val NO_UPSERT_LOGOUT_REMINDER_DELAY_MILLIS = 60_000L
+    }
+}

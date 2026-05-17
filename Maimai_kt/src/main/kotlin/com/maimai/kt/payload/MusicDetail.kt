@@ -1,5 +1,7 @@
 package com.maimai.kt.payload
 
+import com.maimai.kt.constants.PayloadKeys
+
 /** UpsertUserAll 和 playlog 中共用的音乐成绩结构。 */
 data class MusicDetail(
     val musicId: Int,
@@ -15,15 +17,15 @@ data class MusicDetail(
     /** 转成 Map，方便和动态 UserAll payload 合并。 */
     fun toMap(): MutableMap<String, Any?> =
         mutableMapOf(
-            "musicId" to musicId,
-            "level" to level,
-            "playCount" to playCount,
-            "achievement" to achievement,
-            "comboStatus" to comboStatus,
-            "syncStatus" to syncStatus,
-            "deluxscoreMax" to deluxscoreMax,
-            "scoreRank" to scoreRank,
-            "extNum1" to extNum1,
+            PayloadKeys.MUSIC_ID to musicId,
+            PayloadKeys.LEVEL to level,
+            PayloadKeys.PLAY_COUNT to playCount,
+            PayloadKeys.ACHIEVEMENT to achievement,
+            PayloadKeys.COMBO_STATUS to comboStatus,
+            PayloadKeys.SYNC_STATUS to syncStatus,
+            PayloadKeys.DELUXSCORE_MAX to deluxscoreMax,
+            PayloadKeys.SCORE_RANK to scoreRank,
+            PayloadKeys.EXT_NUM_1 to extNum1,
         )
 
     companion object {
@@ -33,7 +35,18 @@ data class MusicDetail(
             level: Int = 1,
             playCount: Int = 1,
             achievement: Int = 114,
+            dxScore: Int = 514,
+        ): MusicDetail =
+            MusicDetail(musicId, level, playCount, achievement, deluxscoreMax = dxScore)
+
+        fun version(
+            musicId: Int = 363,
+            level: Int = 1,
+            playCount: Int = 1,
+            achievement: Int = 114,
             dxScore: Int = 1,
         ): MusicDetail = MusicDetail(musicId, level, playCount, achievement, deluxscoreMax = dxScore)
+
+        fun chargeTicket(): MusicDetail = MusicDetail(17, 0, 1, 100_0000, 0)
     }
 }

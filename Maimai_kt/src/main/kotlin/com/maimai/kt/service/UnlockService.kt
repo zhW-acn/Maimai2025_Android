@@ -10,7 +10,6 @@ class UnlockService(private val fullPlay: FullPlayService) {
         loginResult: Map<String, Any?>,
         itemId: Int,
         itemKind: Int,
-        waitBeforeSubmit: Boolean = true,
     ): MutableMap<String, Any?> = items(
         userId,
         loginTimestamp,
@@ -23,7 +22,6 @@ class UnlockService(private val fullPlay: FullPlayService) {
                 PayloadKeys.IS_VALID to true,
             )
         ),
-        waitBeforeSubmit,
     )
 
     suspend fun musicMaster(userId: Long, loginTimestamp: Long, loginResult: Map<String, Any?>, musicId: Int): MutableMap<String, Any?> =
@@ -49,7 +47,6 @@ class UnlockService(private val fullPlay: FullPlayService) {
         loginTimestamp: Long,
         loginResult: Map<String, Any?>,
         itemList: List<Map<String, Any?>>,
-        waitBeforeSubmit: Boolean = true,
     ): MutableMap<String, Any?> {
         val music = MusicDetail.default(playCount = 0, achievement = 0, dxScore = 0)
         val patch = mapOf(
@@ -60,7 +57,7 @@ class UnlockService(private val fullPlay: FullPlayService) {
                 PayloadKeys.IS_NEW_ITEM_LIST to "1".repeat(itemList.size),
             )
         )
-        return fullPlay.submit(userId, loginTimestamp, loginResult, listOf(music), patch, waitBeforeSubmit)
+        return fullPlay.submit(userId, loginTimestamp, loginResult, listOf(music), patch)
     }
 
     companion object {

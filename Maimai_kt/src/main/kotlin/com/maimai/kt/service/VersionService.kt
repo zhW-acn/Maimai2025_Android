@@ -11,7 +11,6 @@ class VersionService(private val fullPlay: FullPlayService) {
         loginResult: Map<String, Any?>,
         romVersion: String = VersionDefaults.ROM_VERSION,
         dataVersion: String = VersionDefaults.DATA_VERSION,
-        waitBeforeSubmit: Boolean = true,
     ): MutableMap<String, Any?> {
         val cookie = loginResult[PayloadKeys.COOKIE] as Map<String, String>
         val charges = fullPlay.chargeList(userId, cookie)
@@ -26,6 +25,6 @@ class VersionService(private val fullPlay: FullPlayService) {
                 PayloadKeys.IS_NEW_MUSIC_DETAIL_LIST to "1",
             )
         )
-        return fullPlay.submit(userId, loginTimestamp, loginResult, listOf(music), patch, waitBeforeSubmit)
+        return fullPlay.submit(userId, loginTimestamp, loginResult, listOf(music), patch)
     }
 }

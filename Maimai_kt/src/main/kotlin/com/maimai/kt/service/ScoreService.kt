@@ -1,6 +1,7 @@
 package com.maimai.kt.service
 
 import com.maimai.kt.constants.PayloadKeys
+import com.maimai.kt.payload.CharaDetail
 import com.maimai.kt.payload.MusicDetail
 
 class ScoreService(private val fullPlay: FullPlayService) {
@@ -8,20 +9,23 @@ class ScoreService(private val fullPlay: FullPlayService) {
         userId: Long,
         loginTimestamp: Long,
         loginResult: Map<String, Any?>,
-        musicId: Int,
-        level: Int,
-        achievement: Int,
-        dxScore: Int,
-        waitBeforeSubmit: Boolean = true,
+        music: MusicDetail,
+        charaDetail: List<CharaDetail> = CharaDetail.defaultList(),
     ): MutableMap<String, Any?> {
-        val music = MusicDetail.default(musicId, level, achievement = achievement, dxScore = dxScore)
         val patch = mapOf(
             PayloadKeys.UPSERT_USER_ALL to mapOf(
                 PayloadKeys.USER_MUSIC_DETAIL_LIST to listOf(music.toMap()),
                 PayloadKeys.IS_NEW_MUSIC_DETAIL_LIST to "1",
             )
         )
-        return fullPlay.submit(userId, loginTimestamp, loginResult, listOf(music), patch, waitBeforeSubmit)
+        return fullPlay.submit(
+            userId,
+            loginTimestamp,
+            loginResult,
+            listOf(music),
+            patch,
+            charaDetail
+        )
     }
 
     suspend fun delete(
@@ -29,7 +33,6 @@ class ScoreService(private val fullPlay: FullPlayService) {
         loginTimestamp: Long,
         loginResult: Map<String, Any?>,
         musicItems: List<Map<String, Any?>>,
-        waitBeforeSubmit: Boolean = true,
     ): MutableMap<String, Any?> {
         val musicList = musicItems.map {
             MusicDetail(
@@ -43,6 +46,12 @@ class ScoreService(private val fullPlay: FullPlayService) {
                 PayloadKeys.IS_NEW_MUSIC_DETAIL_LIST to "0".repeat(musicList.size),
             )
         )
-        return fullPlay.submit(userId, loginTimestamp, loginResult, musicList, patch, waitBeforeSubmit)
+        return fullPlay.submit(
+            userId,
+            loginTimestamp,
+            loginResult,
+            musicList,
+            patch,
+        )
     }
 }

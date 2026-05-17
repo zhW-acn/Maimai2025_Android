@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <EditText
+            android:id="@+id/musicIdInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_music_id"
+            android:inputType="number"
+            android:singleLine="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/musicImage"
+            android:layout_width="0dp"
+            android:layout_height="144dp"
+            android:layout_marginTop="12dp"
+            android:background="@color/console_logs_background"
+            android:contentDescription="@string/content_music_image"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_stat_maimai"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/musicIdInput" />
+
+        <TextView
+            android:id="@+id/levelLabel"
+            style="@style/ConsoleSectionTitle"
+            android:text="@string/label_score_level"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/musicImage" />
+
+        <Spinner
+            android:id="@+id/levelSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/levelLabel" />
+
+        <LinearLayout
+            android:id="@+id/achievementRow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/levelSpinner">
+
+            <EditText
+                android:id="@+id/achievementIntegerInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/hint_achievement_integer"
+                android:inputType="number"
+                android:maxLength="3"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/achievementDot"
+                android:layout_width="32dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/achievement_decimal_dot"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/achievementFractionInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/hint_achievement_fraction"
+                android:inputType="number"
+                android:maxLength="4"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/comboLabel"
+            style="@style/ConsoleSectionTitle"
+            android:text="@string/label_combo_status"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/achievementRow" />
+
+        <Spinner
+            android:id="@+id/comboStatusSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/comboLabel" />
+
+        <TextView
+            android:id="@+id/syncLabel"
+            style="@style/ConsoleSectionTitle"
+            android:text="@string/label_sync_status"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/comboStatusSpinner" />
+
+        <Spinner
+            android:id="@+id/syncStatusSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/syncLabel" />
+
+        <EditText
+            android:id="@+id/deluxscoreMaxInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="@string/hint_deluxscore_max"
+            android:inputType="number"
+            android:singleLine="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/syncStatusSpinner" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

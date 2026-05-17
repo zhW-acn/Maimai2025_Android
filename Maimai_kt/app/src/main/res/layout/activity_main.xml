@@ -7,11 +7,11 @@
 
         <variable
             name="viewModel"
-            type="com.maimai.android.session.MaimaiConsoleViewModel" />
+            type="com.maimai.android.ui.console.session.MaimaiConsoleViewModel" />
 
         <variable
             name="state"
-            type="com.maimai.android.session.ConsoleUiState" />
+            type="com.maimai.android.ui.console.session.ConsoleUiState" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -29,8 +29,8 @@
                 android:id="@+id/titleText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Maimai Console"
-                android:textColor="#102A26"
+                android:text="@string/app_name"
+                android:textColor="@color/console_title_text"
                 android:textSize="26sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -41,8 +41,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Login, run one action, then auto logout."
-                android:textColor="#586662"
+                android:text="@string/main_subtitle"
+                android:textColor="@color/console_subtitle_text"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +51,7 @@
             <TextView
                 android:id="@+id/qrTitle"
                 style="@style/ConsoleSectionTitle"
-                android:text="QRCode"
+                android:text="@string/section_qrcode"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/subtitleText" />
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:enabled="@{!state.busy &amp;&amp; !state.loggedIn}"
                 android:gravity="top"
-                android:hint="Paste SGWCMAID QRCode text"
+                android:hint="@string/hint_qrcode"
                 android:inputType="textMultiLine|textNoSuggestions"
                 android:maxLines="6"
                 android:minLines="4"
@@ -82,7 +82,7 @@
                 android:layout_marginEnd="8dp"
                 android:enabled="@{!state.busy &amp;&amp; !state.loggedIn &amp;&amp; state.qrCode.length() > 0}"
                 android:onClick="@{() -> viewModel.login()}"
-                android:text="Login"
+                android:text="@string/action_login"
                 app:layout_constraintEnd_toStartOf="@id/logoutButton"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/qrInput" />
@@ -92,9 +92,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:enabled="@{!state.busy &amp;&amp; state.loggedIn}"
+                android:enabled="@{!state.busy &amp;&amp; state.loggedIn &amp;&amp; (state.upsertUserAllCompleted || state.logoutAllowedByTimeout)}"
                 android:onClick="@{() -> viewModel.logout()}"
-                android:text="Logout"
+                android:text="@string/action_logout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/loginButton"
                 app:layout_constraintTop_toBottomOf="@id/qrInput" />
@@ -102,7 +102,7 @@
             <TextView
                 android:id="@+id/sessionTitle"
                 style="@style/ConsoleSectionTitle"
-                android:text="Session"
+                android:text="@string/section_session"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/loginButton" />
@@ -112,7 +112,7 @@
                 layout="@layout/view_console_value_row"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:label='@{"Status"}'
+                app:label="@{@string/label_status}"
                 app:value="@{state.status}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -123,7 +123,7 @@
                 layout="@layout/view_console_value_row"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:label='@{"User ID"}'
+                app:label="@{@string/label_user_id}"
                 app:value="@{state.userId}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -134,7 +134,7 @@
                 layout="@layout/view_console_value_row"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:label='@{"Timestamp"}'
+                app:label="@{@string/label_timestamp}"
                 app:value="@{state.timestamp}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -145,7 +145,7 @@
                 layout="@layout/view_console_value_row"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:label='@{"Cookie"}'
+                app:label="@{@string/label_cookie}"
                 app:value="@{state.cookieStatus}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -156,11 +156,22 @@
                 layout="@layout/view_console_value_row"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:label='@{"Token"}'
+                app:label="@{@string/label_token}"
                 app:value="@{state.tokenStatus}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cookieRow" />
+
+            <include
+                android:id="@+id/upsertRow"
+                layout="@layout/view_console_value_row"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:label="@{@string/label_upsert}"
+                app:value="@{state.upsertStatus}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tokenRow" />
 
             <TextView
                 android:id="@+id/errorText"
@@ -168,79 +179,83 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@{state.lastError}"
-                android:textColor="#B3261E"
+                android:textColor="@color/console_error_text"
                 android:textSize="14sp"
                 android:visibility="@{state.lastError == null ? View.GONE : View.VISIBLE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tokenRow" />
+                app:layout_constraintTop_toBottomOf="@id/upsertRow" />
+
+            <TextView
+                android:id="@+id/upsertWaitText"
+                android:layout_width="0dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="@{state.upsertWaitText}"
+                android:textColor="@color/console_upsert_wait_text"
+                android:textSize="14sp"
+                android:visibility="@{state.upsertWaiting ? View.VISIBLE : View.INVISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/errorText" />
+
+            <ProgressBar
+                android:id="@+id/upsertWaitProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="8dp"
+                android:layout_marginTop="6dp"
+                android:max="100"
+                android:progress="@{state.upsertWaitProgress}"
+                android:visibility="@{state.upsertWaiting ? View.VISIBLE : View.INVISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/upsertWaitText" />
 
             <ProgressBar
                 android:id="@+id/progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:visibility="@{state.busy ? View.VISIBLE : View.GONE}"
+                android:visibility="@{state.busy &amp;&amp; !state.upsertWaiting ? View.VISIBLE : View.GONE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/errorText" />
+                app:layout_constraintTop_toBottomOf="@id/upsertWaitProgress" />
 
             <TextView
                 android:id="@+id/actionTitle"
                 style="@style/ConsoleSectionTitle"
-                android:text="Actions"
+                android:text="@string/section_actions"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/progress" />
 
-            <Button
-                android:id="@+id/uploadButton"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/actionsList"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:enabled="@{!state.busy &amp;&amp; state.loggedIn}"
-                android:onClick="@{() -> viewModel.uploadDemoScore()}"
-                android:text="Upload demo score"
+                android:nestedScrollingEnabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/actionTitle" />
-
-            <Button
-                android:id="@+id/unlockButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:enabled="@{!state.busy &amp;&amp; state.loggedIn}"
-                android:onClick="@{() -> viewModel.unlockDemoMaster()}"
-                android:text="Unlock demo Master"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/uploadButton" />
-
-            <Button
-                android:id="@+id/versionButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:enabled="@{!state.busy &amp;&amp; state.loggedIn}"
-                android:onClick="@{() -> viewModel.changeVersion()}"
-                android:text="Change version"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/unlockButton" />
 
             <TextView
                 android:id="@+id/logTitle"
                 style="@style/ConsoleSectionTitle"
                 android:layout_width="0dp"
-                android:text="Logs"
+                android:text="@string/section_logs"
                 app:layout_constraintEnd_toStartOf="@id/clearLogsButton"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/versionButton" />
+                app:layout_constraintTop_toBottomOf="@id/actionsList" />
 
             <Button
                 android:id="@+id/clearLogsButton"
                 android:layout_width="96dp"
                 android:layout_height="wrap_content"
                 android:onClick="@{() -> viewModel.clearLogs()}"
-                android:text="Clear"
+                android:text="@string/action_clear"
                 app:layout_constraintBottom_toBottomOf="@id/logTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/logTitle" />
@@ -249,7 +264,7 @@
                 android:id="@+id/logsScroll"
                 android:layout_width="0dp"
                 android:layout_height="260dp"
-                android:background="#F3F6F4"
+                android:background="@color/console_logs_background"
                 android:fillViewport="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -260,8 +275,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="12dp"
-                    android:text="No logs"
-                    android:textColor="#23312E"
+                    android:text="@string/logs_empty_initial"
+                    android:textColor="@color/console_logs_text"
                     android:textIsSelectable="true"
                     android:textSize="12sp"
                     android:typeface="monospace" />

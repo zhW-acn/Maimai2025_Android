@@ -1,12 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- 允许 App 访问网络。没有这个权限，Ktor/OkHttp 请求会直接失败。 -->
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <!-- Android 13 以后显示普通通知需要运行时授权。 -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
         android:name=".MaimaiApp"
         android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
@@ -15,8 +18,9 @@
             exported=true 是因为它带 LAUNCHER intent-filter，需要允许系统启动它。
         -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".ui.console.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <!-- MAIN + LAUNCHER 表示这个 Activity 会出现在桌面启动器里。 -->
                 <action android:name="android.intent.action.MAIN" />

@@ -1,0 +1,21 @@
+<resources>
+    <color name="color_primary">#176B5B</color>
+    <color name="color_primary_variant">#0E4F42</color>
+    <color name="color_secondary">#C5573A</color>
+
+    <color name="console_title_text">#102A26</color>
+    <color name="console_subtitle_text">#586662</color>
+    <color name="console_section_title_text">#173B35</color>
+    <color name="console_row_label_text">#68736F</color>
+    <color name="console_row_value_text">#17211F</color>
+    <color name="console_error_text">#B3261E</color>
+    <color name="console_upsert_wait_text">#2B5D54</color>
+    <color name="console_logs_background">#F3F6F4</color>
+    <color name="console_logs_text">#23312E</color>
+
+    <color name="notification_icon_fill">#FFFFFFFF</color>
+    <color name="notification_color_success">#2E7D32</color>
+    <color name="notification_color_failure">#B3261E</color>
+    <color name="notification_color_progress">#176B5B</color>
+    <color name="notification_color_reminder">#C5573A</color>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <!--
+            RecyclerView 每一行都会拿到一个 ConsoleAction。
+            XML 负责把它显示成按钮文字、可用状态和置灰透明度。
+        -->
+        <variable
+            name="action"
+            type="com.maimai.android.ui.console.actions.ConsoleAction" />
+    </data>
+
+    <Button
+        android:id="@+id/actionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alpha="@{action.enabled ? 1.0f : 0.45f}"
+        android:enabled="@{action.enabled}"
+        android:text="@{action.titleRes}" />
+</layout>

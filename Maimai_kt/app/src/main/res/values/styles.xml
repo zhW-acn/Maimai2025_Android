@@ -6,9 +6,9 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="colorPrimary">#176B5B</item>
-        <item name="colorPrimaryVariant">#0E4F42</item>
-        <item name="colorSecondary">#C5573A</item>
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryVariant">@color/color_primary_variant</item>
+        <item name="colorSecondary">@color/color_secondary</item>
     </style>
 
     <!--
@@ -20,7 +20,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingTop">18dp</item>
         <item name="android:paddingBottom">8dp</item>
-        <item name="android:textColor">#173B35</item>
+        <item name="android:textColor">@color/console_section_title_text</item>
         <item name="android:textSize">18sp</item>
     </style>
 </resources>
