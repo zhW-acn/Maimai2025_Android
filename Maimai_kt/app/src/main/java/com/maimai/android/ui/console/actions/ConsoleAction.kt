@@ -23,6 +23,7 @@ fun buildConsoleActions(enabled: Boolean): List<ConsoleAction> =
             id = ConsoleActionId.ChargeTicket,
             titleRes = R.string.action_charge_ticket,
             enabled = enabled,
+            longClickEnabled = true,
         ),
     )
 

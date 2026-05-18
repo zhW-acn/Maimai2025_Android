@@ -1,6 +1,6 @@
 package com.maimai.android.logging
 
-import com.maimai.kt.log.MaimaiLogger
+import kt.log.MaimaiLogger
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -27,40 +27,30 @@ class AppMaimaiLogger @Inject constructor() : MaimaiLogger {
     private val _logs = MutableStateFlow<List<String>>(emptyList())
     val logs: StateFlow<List<String>> = _logs
 
-    /**
-     * 输出调试日志，同时追加到页面日志区。
-     */
+    /** 输出调试日志，同时追加到页面日志区域。 */
     override fun debug(message: String) {
         Timber.tag(TAG).d(message)
         append("DEBUG", message)
     }
 
-    /**
-     * 输出错误日志，同时保留异常信息供页面查看。
-     */
+    /** 输出错误日志，同时保留异常信息供页面查看。 */
     override fun error(message: String, throwable: Throwable?) {
         Timber.tag(TAG).e(throwable, message)
         append("ERROR", if (throwable == null) message else "$message: ${throwable.message}")
     }
 
-    /**
-     * 输出普通业务日志。
-     */
+    /** 输出普通业务日志。 */
     fun info(message: String) {
         Timber.tag(TAG).i(message)
         append("INFO", message)
     }
 
-    /**
-     * 清空页面日志区。
-     */
+    /** 清空页面日志区域。 */
     fun clear() {
         _logs.value = emptyList()
     }
 
-    /**
-     * 把一条日志格式化后写入 StateFlow，页面会自动刷新。
-     */
+    /** 把一条日志格式化后写入 StateFlow，页面会自动刷新。 */
     private fun append(level: String, message: String) {
         val line = "${formatter.format(Date())} [$level] ${prettyPrintJsonPayload(message)}"
         _logs.update { current -> (current + line).takeLast(MAX_LINES) }

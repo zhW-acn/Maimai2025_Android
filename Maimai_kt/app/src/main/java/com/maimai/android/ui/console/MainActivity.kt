@@ -26,10 +26,11 @@ import com.maimai.android.ui.console.actions.ConsoleActionId
 import com.maimai.android.ui.console.actions.buildConsoleActions
 import com.maimai.android.databinding.ActivityMainBinding
 import com.maimai.android.logging.AppMaimaiLogger
+import com.maimai.android.ui.console.dialog.TicketQueryDialog
 import com.maimai.android.ui.console.dialog.UploadScoreDialog
 import com.maimai.android.ui.console.session.ConsoleUiState
 import com.maimai.android.ui.console.session.MaimaiConsoleViewModel
-import com.maimai.kt.constants.AimeConstants
+import kt.constants.AimeConstants
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -37,10 +38,8 @@ import kotlinx.coroutines.launch
 /**
  * App 的主页面，也是 MVVM 里的 View。
  *
- * 现在页面使用 DataBinding：
- * - XML 用 @{state.xxx} 显示状态。
- * - XML 用 @{() -> viewModel.xxx()} 绑定按钮点击。
- * - Activity 只负责把 StateFlow 收集出来，赋给 binding.state。
+ * 页面使用 DataBinding：XML 通过 @{state.xxx} 显示状态，
+ * XML 通过 @{viewModel.xxx()} 调用简单事件，Activity 负责收集 StateFlow 并把新状态交给 binding。
  */
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -64,21 +63,19 @@ class MainActivity : AppCompatActivity() {
     private var latestState = ConsoleUiState()
 
     /**
-     * Activity 创建时初始化 XML Binding、按钮列表、权限请求和状态监听。
+     * Activity 创建时初始化 Binding、按钮列表、权限请求和状态监听。
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
 
-        // lifecycleOwner 让 DataBinding 能感知 Activity 生命周期。
-        // 后续如果 XML 直接绑定 LiveData，这一行也会让 LiveData 自动刷新界面。
+        // lifecycleOwner 璁?DataBinding 鑳芥劅鐭?Activity 鐢熷懡鍛ㄦ湡銆?
+
         binding.lifecycleOwner = this
 
-        // viewModel 给 XML 里的 android:onClick / android:onTextChanged 表达式调用。
         binding.viewModel = viewModel
 
-        // state 给 XML 里的 @{state.xxx} 表达式使用，先给一个默认值避免空状态。
         binding.state = latestState
 
         setContentView(binding.root)
@@ -100,25 +97,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 页面回到前台时尝试从剪切板自动填入二维码。
+     * 页面回到前台时，尝试从剪贴板自动填入二维码。
      */
     override fun onResume() {
         super.onResume()
-        // onResume 时 Activity 正在回到前台，但窗口可能还没有真正拿到焦点。
-        // post 到下一轮主线程消息，可以提高 Android 10+ 读取剪切板的成功率。
+
+
         binding.root.post {
             fillQrCodeFromClipboardIfPossible()
         }
     }
 
     /**
-     * 窗口真正拿到焦点后，再补读一次剪切板。
+     * 窗口真正拿到焦点后，再补读一次剪贴板。
      */
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
-            // Android 对剪切板读取有前台/焦点限制。
-            // 真正获得窗口焦点后再读一次，比只放在 onResume 更稳。
+
+
             binding.root.postDelayed(
                 {
                     fillQrCodeFromClipboardIfPossible()
@@ -144,7 +141,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 初始化功能按钮 RecyclerView。
+     * 初始化功能按钮列表，并把点击事件分发给 ViewModel。
      */
     private fun setupActionsList() {
         actionAdapter = ConsoleActionAdapter(
@@ -165,7 +162,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 根据登录状态和 busy 状态刷新按钮是否可点击。
+     * 根据登录状态和 busy 状态刷新按钮是否可点。
      */
     private fun updateActions(state: ConsoleUiState) {
         actionAdapter.submitList(
@@ -176,7 +173,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 把按钮点击事件分发给对应的 ViewModel 方法。
+     * 处理功能按钮点击事件。
      */
     private fun handleActionClick(actionId: ConsoleActionId) {
         when (actionId) {
@@ -186,17 +183,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 处理功能按钮长按事件；当前版本暂时没有启用长按能力。
+     * 处理功能按钮长按事件。现在长按“发票”会打开查票弹窗。
      */
-    private fun handleActionLongClick(actionId: ConsoleActionId): Boolean =
-        when (actionId) {
-            ConsoleActionId.UploadScore,
-            ConsoleActionId.ChargeTicket,
-                -> false
+    private fun handleActionLongClick(actionId: ConsoleActionId): Boolean {
+        return when (actionId) {
+            ConsoleActionId.ChargeTicket -> {
+                showTicketQueryDialog()
+                true
+            }
+
+            ConsoleActionId.UploadScore -> false
         }
+    }
 
     /**
-     * 处理通知栏点击带回来的内部 action。
+     * 处理从通知栏进入 App 后的动作。
      */
     private fun handleIntentAction(intent: Intent?) {
         when (intent?.action) {
@@ -221,7 +222,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 首次启动时弹出后台设置说明，后续启动不再重复打扰用户。
+     * 弹出查票表单。已登录时直接查询，未登录时由弹窗要求输入用户 ID。
+     */
+    private fun showTicketQueryDialog() {
+        val currentUserId = latestState.userId.toLongOrNull()
+        TicketQueryDialog(
+            activity = this,
+            initialUserId = if (latestState.loggedIn) currentUserId else null,
+            load = viewModel::queryTicketForDialog,
+        ).show()
+    }
+
+    /**
+     * 显示自定义说明弹窗，引导用户进入系统应用详情页。
      */
     private fun requestInitialBackgroundPermissionIfNeeded() {
         val preferences = SPUtils.getInstance(PREFS_NAME)
@@ -240,7 +253,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 显示自定义说明弹窗，引导用户进入系统应用详情页。
+     * 打开当前 App 的系统详情页，让用户手动允许完全后台行为。
      */
     private fun showInitialBackgroundSettingsDialog() {
         AlertDialog.Builder(this)
@@ -254,7 +267,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 打开当前 App 的系统详情页，让用户手动允许完全后台行为。
+     * 从剪贴板自动读取 SGWCMAID 二维码文本。
+     *
+     * 剪贴板没有普通运行时权限可以申请，Android 10 以后基本只能在前台且获得焦点时读取。
+     * 这里只在未登录、未执行任务时自动填入，避免覆盖用户已经使用的会话。
      */
     private fun openAppBackgroundSettings() {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -265,13 +281,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 从剪切板自动读取 SGWCMAID 二维码文本。
-     *
-     * 剪切板没有类似相机、通知那样的运行时权限可以手动申请。
-     * Android 10 以后要求普通 App 基本只能在前台/获得焦点时读取剪切板；
-     * Android 12 以后读取时系统可能显示“某应用读取了剪切板”的隐私提示。
-     *
-     * 这里只在未登录、未执行任务时自动填入，避免用户已经登录后又被剪切板覆盖。
+     * 拦截系统返回键，避免还没 upsertUserAll 就误退出并尝试登出。
      */
     private fun fillQrCodeFromClipboardIfPossible() {
         if (latestState.busy || latestState.loggedIn) {
@@ -339,7 +349,7 @@ class MainActivity : AppCompatActivity() {
     private fun bindBackPressed() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             /**
-             * 拦截系统返回键，避免还没 upsertUserAll 就误退出并尝试 logout。
+             * 收集 ViewModel 的 StateFlow，并把新状态交给 DataBinding。
              */
             override fun handleOnBackPressed() {
                 if (!latestState.loggedIn) {
@@ -369,10 +379,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 收集 ViewModel 和 logger 暴露出来的数据流。
-     *
      * state 的文字、按钮状态、ProgressBar 都已经写进 XML 绑定表达式里。
-     * 所以这里拿到新 state 后，只需要 binding.state = state。
+     * 所以这里拿到新 state 后，只需要更新 binding.state。
      */
     private fun collectState() {
         lifecycleScope.launch {

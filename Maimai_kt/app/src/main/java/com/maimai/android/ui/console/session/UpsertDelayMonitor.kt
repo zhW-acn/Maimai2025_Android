@@ -1,6 +1,6 @@
 package com.maimai.android.ui.console.session
 
-import com.maimai.kt.transport.PostDelayObserver
+import kt.transport.PostDelayObserver
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,8 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
  * 接收核心库 waitBeforePostWithCountdown 的每秒回调。
  *
  * 这个类是 Hilt 单例，所以 ClientConfig 和 ViewModel 拿到的是同一个对象：
- * - ClientConfig 把它传给核心库，让核心库在真实等待时回调这里。
- * - ViewModel 监听 progress，把剩余秒数显示到页面上。
+ * ClientConfig 把等待进度写进来，ViewModel 监听 progress 并刷新页面。
  */
 @Singleton
 class UpsertDelayMonitor @Inject constructor() : PostDelayObserver {

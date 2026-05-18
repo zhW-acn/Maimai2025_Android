@@ -3,6 +3,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Android 13 以后显示普通通知需要运行时授权。 -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:name=".MaimaiApp"
         android:allowBackup="false"

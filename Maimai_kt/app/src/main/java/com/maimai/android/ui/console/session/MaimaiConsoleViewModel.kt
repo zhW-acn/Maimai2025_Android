@@ -6,11 +6,11 @@ import com.blankj.utilcode.util.Utils
 import com.maimai.android.R
 import com.maimai.android.logging.AppMaimaiLogger
 import com.maimai.android.notification.OperationResultNotifier
-import com.maimai.kt.error.MaimaiLoginException
-import com.maimai.kt.payload.CharaDetail
-import com.maimai.kt.payload.MusicDetail
-import com.maimai.kt.service.LoginSession
-import com.maimai.kt.service.MaimaiActions
+import kt.error.MaimaiLoginException
+import kt.payload.CharaDetail
+import kt.payload.MusicDetail
+import kt.service.LoginSession
+import kt.service.MaimaiActions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -37,21 +37,21 @@ class MaimaiConsoleViewModel @Inject constructor(
     /**
      * _state 是 ViewModel 内部可修改的状态。
      *
-     * 命名上加下划线是 Android 常见写法：提醒自己“这个变量不要暴露给外部直接修改”。
+     * 变量名前面加下划线是 Android 常见写法：提醒自己这个变量不要直接暴露给外部修改。
      */
     private val _state = MutableStateFlow(initialState())
 
     /**
      * state 是暴露给 Activity 的只读状态。
      *
-     * Activity 只能 collect 它并刷新 UI，不能直接改它，这样数据流会更清晰。
+     * Activity 只能 collect 它并刷新 UI，不能直接改它，这样数据流会更清楚。
      */
     val state: StateFlow<ConsoleUiState> = _state.asStateFlow()
 
     /**
      * 当前登录会话。
      *
-     * LoginSession 里面的 userId、timestamp、cookie、token 会被后续 API 继续使用。
+     * LoginSession 里的 userId、timestamp、cookie、token 会被后续 API 继续使用。
      * 它属于业务状态，所以放在 ViewModel，不放在 Activity。
      */
     private var session: LoginSession? = null
@@ -127,9 +127,9 @@ class MaimaiConsoleViewModel @Inject constructor(
     }
 
     /**
-     * 手动 logout。
+     * 手动登出。
      *
-     * 重要业务规则：必须先成功执行 upsertUserAll，才能 logout。
+     * 重要业务规则：必须先成功执行 upsertUserAll，才允许登出。
      */
     fun logout() {
         val activeSession = session
@@ -149,9 +149,9 @@ class MaimaiConsoleViewModel @Inject constructor(
     }
 
     /**
-     * 用户点击“未 upsert 超时提醒”通知后执行 logout。
+     * 用户点击“未 upsert 超时提醒”通知后执行登出。
      *
-     * 这个入口会绕过手动 logout 的 upsertUserAll 检查，因为它只在超时提醒通知中使用。
+     * 这个入口会绕过手动登出的 upsertUserAll 检查，因为它只在超时提醒通知中使用。
      */
     fun logoutAfterNoUpsertTimeout() {
         val activeSession = session
@@ -191,13 +191,10 @@ class MaimaiConsoleViewModel @Inject constructor(
     }
 
     /**
-     * 演示用：执行版本变更 API。
-     */
-    /**
-     * 购入指定类型的 Ticket。
+     * 购买指定类型的票券。
      *
      * TicketService.buy 调用的是 upsertChargeLog，不是 upsertUserAll。
-     * 所以这里不会自动 logout，避免违反“未 upsertUserAll 前不要 logout”的业务规则。
+     * 所以这里不自动登出，避免违反“未 upsertUserAll 前不要登出”的业务规则。
      */
     fun buyTicket(ticketType: Int = 6) {
         val activeSession = session
@@ -220,22 +217,44 @@ class MaimaiConsoleViewModel @Inject constructor(
         }
     }
 
-    fun changeVersion() {
-        runOperationInViewModel(text(R.string.action_change_version)) { activeSession ->
-            actions.versions.change(
-                activeSession.userId,
-                activeSession.timestamp,
-                activeSession.login,
-            )
+    fun queryTicket() {
+        val activeSession = session
+        if (activeSession == null) {
+            setError(text(R.string.error_login_required))
+            return
+        }
+        viewModelScope.launch {
+            runBusy(text(R.string.status_operation_running, text(R.string.action_charge_ticket))) {
+                logger.info(text(R.string.log_query_ticket))
+                val query = actions.tickets.query(
+                    userId = activeSession.userId,
+                    cookie = activeSession.cookie,
+                )
+                logger.info(text(R.string.log_query_ticket_success) + query)
+            }
         }
     }
 
     /**
-     * 在 ViewModel 中执行业务操作。
+     * 给查票弹窗调用的查询入口。
      *
-     * 这种方式最直接：页面日志、倒计时、进度条都和真实 API 调用在同一个协程里。
-     * 注意：如果 App 被系统切后台冻结，ViewModel 里的协程也可能暂停。
+     * 已登录时优先使用当前会话；未登录时使用弹窗里输入的 userId。
      */
+    suspend fun queryTicketForDialog(userId: Long? = null): TicketQueryResult {
+        val activeSession = session
+        val queryUserId = activeSession?.userId
+            ?: userId
+            ?: throw IllegalStateException("请填写用户 ID")
+
+        logger.info(text(R.string.log_query_ticket))
+        val query = actions.tickets.query(
+            userId = queryUserId,
+            cookie = activeSession?.cookie,
+        )
+        logger.info(text(R.string.log_query_ticket_success) + query)
+        return TicketQueryResult.fromMap(query)
+    }
+
     private fun runOperationInViewModel(
         name: String,
         block: suspend (LoginSession) -> Unit,
@@ -414,7 +433,7 @@ class MaimaiConsoleViewModel @Inject constructor(
     }
 
     /**
-     * 登录后 60 秒仍没有 upsertUserAll，就发通知提醒用户点击 logout。
+     * 登录后 60 秒仍没有 upsertUserAll，就发通知提醒用户点击登出。
      */
     private fun scheduleNoUpsertLogoutReminder(userId: Long) {
         noUpsertLogoutReminderJob?.cancel()

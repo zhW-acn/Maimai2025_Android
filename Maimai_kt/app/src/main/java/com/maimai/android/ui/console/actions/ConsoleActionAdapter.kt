@@ -47,7 +47,7 @@ class ConsoleActionAdapter(
                 if (action.enabled) onClick(action.id)
             }
             binding.actionButton.setOnLongClickListener {
-                action.enabled && action.longClickEnabled && onLongClick(action.id)
+                action.longClickEnabled && onLongClick(action.id)
             }
         }
     }

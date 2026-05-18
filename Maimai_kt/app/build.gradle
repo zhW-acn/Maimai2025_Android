@@ -1,5 +1,5 @@
 plugins {
-    // Android application 插件：让这个模块成为可以安装到手机上的 APK。
+    // Android 应用插件：让这个模块可以构建成安装到手机上的 APK。
     id 'com.android.application'
 
     // Kotlin Android 插件：让 app 模块可以编译 Android/Kotlin 代码。
@@ -16,7 +16,7 @@ android {
     // namespace 是 R、BuildConfig、ViewBinding 等生成类所属的包名。
     namespace 'com.maimai.android'
 
-    // compileSdk 表示用 Android 34 的 API 编译。这里对应 Android 14。
+    // compileSdk 表示使用 Android 34 的 API 编译，对应 Android 14。
     compileSdk 34
 
     defaultConfig {
@@ -34,7 +34,7 @@ android {
     }
 
     buildFeatures {
-        // BuildConfig.DEBUG 等生成字段。
+        // 生成 BuildConfig.DEBUG 等字段。
         buildConfig true
 
         // ViewBinding 让 Kotlin 可以通过 binding.xxx 访问 XML 控件。
@@ -45,14 +45,14 @@ android {
     }
 
     compileOptions {
-        // Java 编译目标。需要和 Kotlin jvmTarget 保持一致。
+        // Java 编译目标，需要和 Kotlin jvmTarget 保持一致。
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
 }
 
 kotlin {
-    // 指定 Kotlin 使用 JDK 17 工具链，避免 IDE/JDK 版本不同导致 target 不一致。
+    // 指定 Kotlin 使用 JDK 17 工具链，避免 IDE/JDK 版本不同导致目标版本不一致。
     jvmToolchain(17)
 }
 
@@ -69,9 +69,6 @@ kapt {
 }
 
 dependencies {
-    // 依赖根模块里的 maimai Kotlin 客户端库。
-    implementation project(':')
-
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.activity:activity-ktx:1.8.2'
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -83,6 +80,11 @@ dependencies {
     implementation 'com.google.dagger:hilt-android:2.51'
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.blankj:utilcodex:1.31.1'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2'
+    implementation 'io.ktor:ktor-client-core:2.3.12'
+    implementation 'io.ktor:ktor-client-okhttp:2.3.12'
 
     kapt 'com.google.dagger:hilt-android-compiler:2.51'
 }

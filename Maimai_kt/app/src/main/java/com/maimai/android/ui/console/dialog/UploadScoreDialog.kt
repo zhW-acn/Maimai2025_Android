@@ -7,17 +7,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.maimai.android.R
 import com.maimai.android.databinding.DialogUploadScoreBinding
-import com.maimai.kt.payload.MusicDetail
+import kt.payload.MusicDetail
 
 /**
  * 上传成绩弹窗。
  *
- * 这个类专门负责：
- * - 创建弹窗 UI。
- * - 读取并校验表单。
- * - 把表单转换成 MusicDetail。
- *
- * MainActivity 只需要调用 show，不需要关心弹窗内部每个控件怎么取值。
+ * 负责初始化表单、读取并校验输入，MainActivity 只需要调用 show。
  */
 class UploadScoreDialog(
     private val activity: AppCompatActivity,
@@ -25,7 +20,7 @@ class UploadScoreDialog(
     private val onSubmit: (MusicDetail) -> Unit,
 ) {
     /**
-     * 显示上传成绩表单。
+     * 鏄剧ず涓婁紶鎴愮哗琛ㄥ崟銆?
      */
     fun show() {
         val binding = DialogUploadScoreBinding.inflate(LayoutInflater.from(activity))
@@ -55,18 +50,14 @@ class UploadScoreDialog(
         dialog.show()
     }
 
-    /**
-     * 使用 Kotlin enum 填充下拉框，避免 XML 数组 label/value 下标错位。
-     */
+    /** 使用 Kotlin enum 填充下拉框，避免 XML 数组 label/value 下标错位。 */
     private fun bindSpinners(binding: DialogUploadScoreBinding) {
         bindSpinner(binding.levelSpinner, ScoreLevel.values())
         bindSpinner(binding.comboStatusSpinner, ComboStatus.values())
         bindSpinner(binding.syncStatusSpinner, SyncStatus.values())
     }
 
-    /**
-     * 把枚举选项转换成 Spinner 可展示的文本列表。
-     */
+    /** 把枚举选项转换成 Spinner 可展示的文本列表。 */
     private fun <T> bindSpinner(
         spinner: Spinner,
         options: Array<T>
@@ -82,9 +73,7 @@ class UploadScoreDialog(
         spinner.adapter = adapter
     }
 
-    /**
-     * 给表单设置默认值，减少测试时重复输入。
-     */
+    /** 给表单设置默认值，减少测试时重复输入。 */
     private fun bindDefaults(binding: DialogUploadScoreBinding) {
         binding.levelSpinner.setSelection(DEFAULT_LEVEL_INDEX)
         binding.achievementIntegerInput.setText(DEFAULT_ACHIEVEMENT_INTEGER)
@@ -92,9 +81,7 @@ class UploadScoreDialog(
         binding.deluxscoreMaxInput.setText(DEFAULT_DELUXSCORE_MAX)
     }
 
-    /**
-     * 从表单控件读取值，校验成功后构造 MusicDetail。
-     */
+    /** 从表单控件读取值，校验成功后构造 MusicDetail。 */
     private fun buildMusicDetail(binding: DialogUploadScoreBinding): MusicDetail? {
         val musicId = binding.musicIdInput.text.toString().toIntOrNull()
         val achievementInteger = binding.achievementIntegerInput.text.toString().toIntOrNull()

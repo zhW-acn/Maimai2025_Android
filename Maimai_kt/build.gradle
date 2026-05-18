@@ -1,28 +1,12 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '2.0.21'
     id 'com.android.application' version '8.5.0' apply false
     id 'org.jetbrains.kotlin.android' version '2.0.21' apply false
     id 'org.jetbrains.kotlin.kapt' version '2.0.21' apply false
     id 'com.google.dagger.hilt.android' version '2.51' apply false
-    id 'application'
 }
 
-group = 'com.maimai'
-version = '0.1.0'
-
-kotlin {
-    jvmToolchain(17)
-}
-
-dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2'
-    implementation 'io.ktor:ktor-client-core:2.3.12'
-    implementation 'io.ktor:ktor-client-okhttp:2.3.12'
-    implementation 'org.slf4j:slf4j-simple:2.0.13'
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
-}
-
-application {
-    mainClass = 'com.maimai.kt.example.RefactoredUsageKt'
+tasks.register('assemble') {
+    group = 'build'
+    description = '从根项目构建 app 模块。'
+    dependsOn ':app:assemble'
 }

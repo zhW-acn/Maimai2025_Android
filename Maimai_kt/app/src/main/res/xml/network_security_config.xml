@@ -6,7 +6,7 @@
     所以这里单独允许 ai.sys-allnet.cn 使用明文流量。
 
     注意：不要直接给所有域名开启 cleartextTrafficPermitted，
-    只给确实需要 HTTP 的域名开，风险更小。
+    只给确实需要 HTTP 的域名开启，风险更小。
 -->
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">

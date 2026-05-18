@@ -16,7 +16,7 @@
         android:id="@+id/actionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:alpha="@{action.enabled ? 1.0f : 0.45f}"
-        android:enabled="@{action.enabled}"
+        android:alpha="@{action.enabled ? 1.0f : action.longClickEnabled ? 0.72f : 0.45f}"
+        android:enabled="@{action.enabled || action.longClickEnabled}"
         android:text="@{action.titleRes}" />
 </layout>
