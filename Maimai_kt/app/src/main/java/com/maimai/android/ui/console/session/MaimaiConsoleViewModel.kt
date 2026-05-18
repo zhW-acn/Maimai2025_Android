@@ -1,5 +1,6 @@
 package com.maimai.android.ui.console.session
 
+import android.graphics.Point
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.Utils
@@ -13,6 +14,7 @@ import kt.service.LoginSession
 import kt.service.MaimaiActions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kt.constants.PayloadKeys
 
 /**
  * MainActivity 对应的 ViewModel。
@@ -58,6 +61,7 @@ class MaimaiConsoleViewModel @Inject constructor(
     private var upsertUserAllCompleted: Boolean = false
     private var logoutAllowedByTimeout: Boolean = false
     private var noUpsertLogoutReminderJob: Job? = null
+    private var currentOperationJob: Job? = null
 
     init {
         collectUpsertDelayProgress()
@@ -75,6 +79,23 @@ class MaimaiConsoleViewModel @Inject constructor(
      */
     fun clearLogs() {
         logger.clear()
+    }
+
+    /**
+     * 用户在等待 upsertUserAll / upsertChargeLog 倒计时时，可以手动取消当前任务。
+     *
+     * 这里只取消正在执行的业务协程，不清空登录会话；取消后用户仍然停留在当前登录状态。
+     */
+    fun cancelCurrentOperation() {
+        val job = currentOperationJob
+        if (job == null || job.isCompleted) {
+            return
+        }
+
+        logger.info(text(R.string.log_operation_cancel_requested))
+        upsertDelayMonitor.clear()
+        operationResultNotifier.cancelUpsertProgress()
+        job.cancel(CancellationException(text(R.string.error_operation_cancelled)))
     }
 
     /**
@@ -98,7 +119,9 @@ class MaimaiConsoleViewModel @Inject constructor(
                 session = loginSession
                 upsertUserAllCompleted = false
                 logoutAllowedByTimeout = false
-                scheduleNoUpsertLogoutReminder(loginSession.userId)
+                val loginGuardDeadlineEpochMillis =
+                    upsertDelayMonitor.startLoginGuard(LOGIN_GUARD_DURATION_MILLIS)
+                scheduleNoUpsertLogoutReminder(loginSession.userId, loginGuardDeadlineEpochMillis)
 
                 logger.info(text(R.string.log_login_success, loginSession.userId))
 
@@ -149,6 +172,43 @@ class MaimaiConsoleViewModel @Inject constructor(
     }
 
     /**
+     * 长按登出使用的入口。
+     *
+     * 当前会话可用时可以直接复用已填入的 cookie；没有会话时也可以手动输入 cookie 登出。
+     */
+    fun logoutByUserIdCookie(userId: Long, cookieText: String) {
+        if (cookieText.isBlank()) {
+            setError(text(R.string.error_manual_logout_form_required))
+            return
+        }
+
+        viewModelScope.launch {
+            runBusy(text(R.string.status_manual_logout_running)) {
+                val activeSession = session
+                val cookie = parseCookieText(cookieText)
+
+                logger.info(text(R.string.log_logout_start, userId))
+                actions.sessions.logout(userId, cookie)
+                logger.info(text(R.string.log_logout_success))
+
+                if (activeSession == null || activeSession.userId == userId) {
+                    session = null
+                    upsertUserAllCompleted = false
+                    logoutAllowedByTimeout = false
+                    markLoggedOut(text(R.string.status_logged_out))
+                } else {
+                    _state.update {
+                        it.copy(
+                            status = text(R.string.status_manual_logout_completed, userId),
+                            lastError = null,
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * 用户点击“未 upsert 超时提醒”通知后执行登出。
      *
      * 这个入口会绕过手动登出的 upsertUserAll 检查，因为它只在超时提醒通知中使用。
@@ -191,10 +251,32 @@ class MaimaiConsoleViewModel @Inject constructor(
     }
 
     /**
+     * 根据弹窗表单传入的歌曲成绩上传 upsertUserAll。
+     */
+    fun uploadPoint(
+        point: Int = 99999
+    ) {
+        runOperationInViewModel(text(R.string.action_upload_point)) { activeSession ->
+            val patch = mapOf(
+                PayloadKeys.USER_DATA to listOf(
+                    mapOf(
+                        PayloadKeys.POINT to point,
+                        PayloadKeys.TOTAL_POINT to point,
+                    )
+                )
+            )
+            actions.scores.upload(
+                userId = activeSession.userId,
+                loginTimestamp = activeSession.timestamp,
+                loginResult = activeSession.login,
+                music = MusicDetail.point(),
+                extra = patch
+            )
+        }
+    }
+
+    /**
      * 购买指定类型的票券。
-     *
-     * TicketService.buy 调用的是 upsertChargeLog，不是 upsertUserAll。
-     * 所以这里不自动登出，避免违反“未 upsertUserAll 前不要登出”的业务规则。
      */
     fun buyTicket(ticketType: Int = 6) {
         val activeSession = session
@@ -203,7 +285,7 @@ class MaimaiConsoleViewModel @Inject constructor(
             return
         }
 
-        viewModelScope.launch {
+        currentOperationJob = viewModelScope.launch {
             runBusy(text(R.string.status_operation_running, text(R.string.action_charge_ticket))) {
                 logger.info(text(R.string.log_ticket_buy_start, ticketType))
                 actions.tickets.buy(
@@ -212,25 +294,6 @@ class MaimaiConsoleViewModel @Inject constructor(
                     cookie = activeSession.cookie,
                 )
                 logger.info(text(R.string.log_ticket_buy_success, ticketType))
-                runLogout(activeSession, text(R.string.status_operation_completed_auto_logout))
-            }
-        }
-    }
-
-    fun queryTicket() {
-        val activeSession = session
-        if (activeSession == null) {
-            setError(text(R.string.error_login_required))
-            return
-        }
-        viewModelScope.launch {
-            runBusy(text(R.string.status_operation_running, text(R.string.action_charge_ticket))) {
-                logger.info(text(R.string.log_query_ticket))
-                val query = actions.tickets.query(
-                    userId = activeSession.userId,
-                    cookie = activeSession.cookie,
-                )
-                logger.info(text(R.string.log_query_ticket_success) + query)
             }
         }
     }
@@ -265,7 +328,7 @@ class MaimaiConsoleViewModel @Inject constructor(
             return
         }
 
-        viewModelScope.launch {
+        currentOperationJob = viewModelScope.launch {
             var upsertSucceeded = false
             try {
                 logger.info(text(R.string.log_operation_start, name))
@@ -305,6 +368,22 @@ class MaimaiConsoleViewModel @Inject constructor(
                         message = text(R.string.notification_logout_failed_message),
                     )
                 }
+            } catch (error: CancellationException) {
+                logger.info(text(R.string.log_operation_cancelled, name))
+                upsertDelayMonitor.clear()
+                operationResultNotifier.cancelUpsertProgress()
+                _state.update {
+                    it.copy(
+                        busy = false,
+                        upsertWaiting = false,
+                        upsertWaitRemainingSeconds = 0,
+                        upsertWaitTotalSeconds = 0,
+                        upsertWaitProgress = 0,
+                        upsertWaitText = "",
+                        status = text(R.string.status_operation_cancelled),
+                        lastError = null,
+                    )
+                }
             } catch (error: Throwable) {
                 val message = error.message ?: error::class.java.simpleName
                 logger.error(text(R.string.log_operation_failed, name), error)
@@ -314,6 +393,7 @@ class MaimaiConsoleViewModel @Inject constructor(
                     message = message,
                 )
             } finally {
+                currentOperationJob = null
                 if (!upsertSucceeded) {
                     logger.info(text(R.string.log_operation_no_upsert_skip_logout, name))
                     _state.update { it.copy(busy = false) }
@@ -412,10 +492,31 @@ class MaimaiConsoleViewModel @Inject constructor(
             setError(message)
         } catch (error: Throwable) {
             val message = error.message ?: error::class.java.simpleName
-            logger.error(text(R.string.error_operation_failed), error)
-            setError(message)
+            if (error is CancellationException) {
+                logger.info(text(R.string.log_operation_cancelled, label))
+                upsertDelayMonitor.clear()
+                operationResultNotifier.cancelUpsertProgress()
+                _state.update {
+                    it.copy(
+                        busy = false,
+                        upsertWaiting = false,
+                        upsertWaitRemainingSeconds = 0,
+                        upsertWaitTotalSeconds = 0,
+                        upsertWaitProgress = 0,
+                        upsertWaitText = "",
+                        status = text(R.string.status_operation_cancelled),
+                        lastError = null,
+                    )
+                }
+            } else {
+                logger.error(text(R.string.error_operation_failed), error)
+                setError(message)
+            }
         } finally {
             _state.update { it.copy(busy = false) }
+            if (currentOperationJob?.isCompleted == true) {
+                currentOperationJob = null
+            }
         }
     }
 
@@ -435,10 +536,37 @@ class MaimaiConsoleViewModel @Inject constructor(
     /**
      * 登录后 60 秒仍没有 upsertUserAll，就发通知提醒用户点击登出。
      */
-    private fun scheduleNoUpsertLogoutReminder(userId: Long) {
+    private fun scheduleNoUpsertLogoutReminder(userId: Long, deadlineEpochMillis: Long) {
         noUpsertLogoutReminderJob?.cancel()
         noUpsertLogoutReminderJob = viewModelScope.launch {
-            delay(NO_UPSERT_LOGOUT_REMINDER_DELAY_MILLIS)
+            while (true) {
+                val stillSameSession = session?.userId == userId
+                if (!stillSameSession || upsertUserAllCompleted) {
+                    return@launch
+                }
+
+                val remainingMillis =
+                    (deadlineEpochMillis - System.currentTimeMillis()).coerceAtLeast(0L)
+                if (remainingMillis <= 0L) {
+                    break
+                }
+                val remainingSeconds = ((remainingMillis + 999L) / 1_000L).toInt()
+
+                _state.update {
+                    if (it.upsertWaiting) {
+                        it.copy(logoutAllowedByTimeout = false)
+                    } else {
+                        it.copy(
+                            logoutAllowedByTimeout = false,
+                            upsertStatus = text(
+                                R.string.status_logout_timeout_countdown,
+                                remainingSeconds
+                            ),
+                        )
+                    }
+                }
+                delay(minOf(1_000L, remainingMillis))
+            }
 
             val stillSameSession = session?.userId == userId
             if (stillSameSession && !upsertUserAllCompleted) {
@@ -446,10 +574,14 @@ class MaimaiConsoleViewModel @Inject constructor(
                 logger.info(text(R.string.log_no_upsert_timeout_reminder))
                 operationResultNotifier.notifyNoUpsertLogoutReminder()
                 _state.update {
-                    it.copy(
-                        logoutAllowedByTimeout = true,
-                        upsertStatus = text(R.string.status_no_upsert_timeout_logout_allowed),
-                    )
+                    if (it.upsertWaiting) {
+                        it.copy(logoutAllowedByTimeout = true)
+                    } else {
+                        it.copy(
+                            logoutAllowedByTimeout = true,
+                            upsertStatus = text(R.string.status_no_upsert_timeout_logout_allowed),
+                        )
+                    }
                 }
             }
         }
@@ -461,6 +593,7 @@ class MaimaiConsoleViewModel @Inject constructor(
     private fun cancelNoUpsertLogoutReminder() {
         noUpsertLogoutReminderJob?.cancel()
         noUpsertLogoutReminderJob = null
+        upsertDelayMonitor.clearLoginGuard()
         operationResultNotifier.cancelNoUpsertLogoutReminder()
     }
 
@@ -509,8 +642,26 @@ class MaimaiConsoleViewModel @Inject constructor(
     private fun text(resId: Int, vararg args: Any): String =
         Utils.getApp().getString(resId, *args)
 
+    private fun parseCookieText(value: String): Map<String, String> {
+        val normalized = value.trim().removeSurrounding("{", "}")
+        val cookie = normalized
+            .split(";")
+            .flatMap { it.split(",") }
+            .mapNotNull { part ->
+                val key = part.substringBefore("=", "").trim()
+                val cookieValue = part.substringAfter("=", "").trim()
+                if (key.isBlank() || cookieValue.isBlank()) null else key to cookieValue
+            }
+            .toMap()
+
+        if (cookie.isEmpty()) {
+            throw IllegalStateException(text(R.string.error_cookie_invalid))
+        }
+        return cookie
+    }
+
     private companion object {
         const val EMPTY_VALUE = "-"
-        const val NO_UPSERT_LOGOUT_REMINDER_DELAY_MILLIS = 60_000L
+        const val LOGIN_GUARD_DURATION_MILLIS = 60_000L
     }
 }

@@ -48,7 +48,7 @@ class UnlockService(private val fullPlay: FullPlayService) {
         loginResult: Map<String, Any?>,
         itemList: List<Map<String, Any?>>,
     ): MutableMap<String, Any?> {
-        val music = MusicDetail.default(playCount = 0, achievement = 0, dxScore = 0)
+        val music = MusicDetail.default()
         val patch = mapOf(
             PayloadKeys.UPSERT_USER_ALL to mapOf(
                 PayloadKeys.USER_MUSIC_DETAIL_LIST to listOf(music.toMap()),

@@ -4,7 +4,7 @@ import kt.constants.PayloadKeys
 import kt.payload.CharaDetail
 import kt.payload.MusicDetail
 
-class ScoreService(private val fullPlay: FullPlayService) {
+class PointService(private val fullPlay: FullPlayService) {
     suspend fun upload(
         userId: Long,
         loginTimestamp: Long,

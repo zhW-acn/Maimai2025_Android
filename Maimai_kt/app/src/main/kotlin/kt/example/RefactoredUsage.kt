@@ -14,12 +14,7 @@ fun main() = runBlocking {
 
     try {
         val musicDetails = listOf(
-            MusicDetail.default(
-                musicId = 363,
-                level = 1,
-                achievement = 100_0000,
-                dxScore = 100,
-            )
+            MusicDetail.default()
         )
         val musicData = musicDetails.map { it.toMap() }
         val userAllPatches = mapOf(

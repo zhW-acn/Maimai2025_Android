@@ -7,6 +7,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.maimai.android.R
 import com.maimai.android.databinding.DialogUploadScoreBinding
+import com.maimai.android.enums.ComboStatus
+import com.maimai.android.enums.ScoreDialogOption
+import com.maimai.android.enums.ScoreLevel
+import com.maimai.android.enums.ScoreRank
+import com.maimai.android.enums.SyncStatus
 import kt.payload.MusicDetail
 
 /**

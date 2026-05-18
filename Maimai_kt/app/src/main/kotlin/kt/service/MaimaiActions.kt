@@ -17,6 +17,7 @@ class MaimaiActions(config: ClientConfig = ClientConfig(), logger: MaimaiLogger 
     val users = UserRepository(api)
     val fullPlay = FullPlayService(api, users)
     val scores = ScoreService(fullPlay)
+    val points = ScoreService(fullPlay)
     val unlocks = UnlockService(fullPlay)
     val tickets = TicketService(api, fullPlay, users)
     val versions = VersionService(fullPlay)

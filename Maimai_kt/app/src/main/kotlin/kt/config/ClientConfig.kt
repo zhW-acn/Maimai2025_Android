@@ -28,6 +28,7 @@ data class ClientConfig(
     val verifyTls: Boolean = envBool(EnvNames.VERIFY_TLS, DefaultValues.VERIFY_TLS),
     val use2024Api: Boolean = envBool(EnvNames.USE_2024_API, DefaultValues.USE_2024_API),
     val waitBeforeUpsertMillis: Long = envLong(EnvNames.WAIT_BEFORE_UPSERT_MILLIS, DefaultValues.WAIT_BEFORE_UPSERT_MILLIS),
+    val waitBeforeUpsertMillisProvider: (() -> Long)? = null,
     val postDelayObserver: PostDelayObserver = PostDelayObserver.None,
     val musicDbPath: Path = Path(env(EnvNames.MUSIC_DB_PATH, DefaultValues.MUSIC_DB_PATH)),
 ) {
@@ -42,6 +43,9 @@ data class ClientConfig(
     /** API 鍚嶇О hash 鏃朵娇鐢ㄧ殑娣锋穯鍙傛暟銆?*/
     val obfuscateParam: String
         get() = if (use2024Api) CryptoConstants.OBFUSCATE_2024 else CryptoConstants.OBFUSCATE_LEGACY
+
+    fun currentWaitBeforeUpsertMillis(): Long =
+        waitBeforeUpsertMillisProvider?.invoke() ?: waitBeforeUpsertMillis
 }
 
 private fun env(name: String, default: String): String = System.getenv(name) ?: default

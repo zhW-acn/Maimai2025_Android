@@ -92,7 +92,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:enabled="@{!state.busy &amp;&amp; state.loggedIn &amp;&amp; (state.upsertUserAllCompleted || state.logoutAllowedByTimeout)}"
+                android:enabled="@{!state.busy}"
                 android:onClick="@{() -> viewModel.logout()}"
                 android:text="@string/action_logout"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -214,6 +214,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/upsertWaitText" />
 
+            <Button
+                android:id="@+id/cancelTaskButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:onClick="@{() -> viewModel.cancelCurrentOperation()}"
+                android:text="@string/action_cancel_task"
+                android:visibility="@{state.upsertWaiting ? View.VISIBLE : View.GONE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/upsertWaitProgress" />
+
             <ProgressBar
                 android:id="@+id/progress"
                 android:layout_width="wrap_content"
@@ -222,7 +234,7 @@
                 android:visibility="@{state.busy &amp;&amp; !state.upsertWaiting ? View.VISIBLE : View.GONE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/upsertWaitProgress" />
+                app:layout_constraintTop_toBottomOf="@id/cancelTaskButton" />
 
             <TextView
                 android:id="@+id/actionTitle"

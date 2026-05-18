@@ -5,7 +5,8 @@ import com.maimai.android.R
 
 enum class ConsoleActionId {
     UploadScore,
-    ChargeTicket
+    ChargeTicket,
+    Point
 }
 
 
@@ -24,6 +25,12 @@ fun buildConsoleActions(enabled: Boolean): List<ConsoleAction> =
             titleRes = R.string.action_charge_ticket,
             enabled = enabled,
             longClickEnabled = true,
+        ),
+        ConsoleAction(
+            id = ConsoleActionId.Point,
+            titleRes = R.string.action_point,
+            enabled = enabled,
+            longClickEnabled = false,
         ),
     )
 

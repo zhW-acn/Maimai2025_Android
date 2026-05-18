@@ -1,5 +1,8 @@
 package kt.payload
 
+import com.maimai.android.enums.ComboStatus
+import com.maimai.android.enums.ScoreLevel
+import com.maimai.android.enums.SyncStatus
 import kt.constants.PayloadKeys
 
 /** UpsertUserAll 鍜?playlog 涓叡鐢ㄧ殑闊充箰鎴愮哗缁撴瀯銆?*/
@@ -29,24 +32,41 @@ data class MusicDetail(
         )
 
     companion object {
-        /** 非成绩类动作使用的默认成绩，用来带起一次完整 UpsertUserAll。 */
-        fun default(
-            musicId: Int = 363,
-            level: Int = 1,
-            playCount: Int = 1,
-            achievement: Int = 114,
-            dxScore: Int = 514,
-        ): MusicDetail =
-            MusicDetail(musicId, level, playCount, achievement, deluxscoreMax = dxScore)
+        /**
+         * 默认成绩 绿谱 Oshama Scramble! 理论
+         */
+        fun default(): MusicDetail =
+            MusicDetail(
+                363,
+                ScoreLevel.Basic.apiValue,
+                1,
+                101_0000,
+                ComboStatus.AllPerfectPlus.apiValue,
+                SyncStatus.FullSyncDxPlus.apiValue
+            )
 
-        fun version(
-            musicId: Int = 363,
-            level: Int = 1,
-            playCount: Int = 1,
-            achievement: Int = 114,
-            dxScore: Int = 1,
-        ): MusicDetail = MusicDetail(musicId, level, playCount, achievement, deluxscoreMax = dxScore)
+        /**
+         * 发票 绿谱 Future 理论
+         */
+        fun chargeTicket(): MusicDetail = MusicDetail(
+            17,
+            ScoreLevel.Basic.apiValue,
+            1,
+            101_0000,
+            ComboStatus.AllPerfectPlus.apiValue,
+            SyncStatus.FullSyncDxPlus.apiValue
+        )
 
-        fun chargeTicket(): MusicDetail = MusicDetail(17, 0, 1, 100_0000, 0)
+        /**
+         * 舞里程 绿谱 Love You 理论
+         */
+        fun point(): MusicDetail = MusicDetail(
+            18,
+            ScoreLevel.Basic.apiValue,
+            1,
+            101_0000,
+            ComboStatus.AllPerfectPlus.apiValue,
+            SyncStatus.FullSyncDxPlus.apiValue
+        )
     }
 }

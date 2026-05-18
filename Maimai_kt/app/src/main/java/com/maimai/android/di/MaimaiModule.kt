@@ -36,7 +36,10 @@ object MaimaiModule {
     @Provides
     @Singleton
     fun provideClientConfig(upsertDelayMonitor: UpsertDelayMonitor): ClientConfig =
-        ClientConfig(postDelayObserver = upsertDelayMonitor)
+        ClientConfig(
+            waitBeforeUpsertMillisProvider = upsertDelayMonitor::remainingLoginGuardMillis,
+            postDelayObserver = upsertDelayMonitor,
+        )
 
     /** 把 AppMaimaiLogger 注入核心库，网络请求日志会进入 Timber 和页面日志面板。 */
     @Provides

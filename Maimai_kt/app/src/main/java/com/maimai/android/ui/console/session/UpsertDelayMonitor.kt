@@ -16,8 +16,32 @@ import kotlinx.coroutines.flow.StateFlow
 class UpsertDelayMonitor @Inject constructor() : PostDelayObserver {
     private val _progress = MutableStateFlow<UpsertDelayProgress?>(null)
     private var currentTargetEpochMillis: Long? = null
+    private var loginGuardDeadlineEpochMillis: Long? = null
 
     val progress: StateFlow<UpsertDelayProgress?> = _progress
+
+    /**
+     * 登录成功后记录统一的 60 秒截止点。
+     *
+     * 页面展示的倒计时和 upsert 前等待都读这个时间，避免两个倒计时各算各的。
+     */
+    fun startLoginGuard(durationMillis: Long): Long {
+        val deadline = System.currentTimeMillis() + durationMillis
+        loginGuardDeadlineEpochMillis = deadline
+        return deadline
+    }
+
+    /**
+     * 当前距离登录保护截止点还剩多久；已经超过截止点就返回 0。
+     */
+    fun remainingLoginGuardMillis(): Long {
+        val deadline = loginGuardDeadlineEpochMillis ?: return 0L
+        return (deadline - System.currentTimeMillis()).coerceAtLeast(0L)
+    }
+
+    fun clearLoginGuard() {
+        loginGuardDeadlineEpochMillis = null
+    }
 
     /**
      * 核心库每等待一秒会回调这里，用于刷新页面和通知栏倒计时。
@@ -35,6 +59,14 @@ class UpsertDelayMonitor @Inject constructor() : PostDelayObserver {
      * 核心库完成等待并准备发送 POST 时回调这里。
      */
     override fun onComplete(label: String) {
+        currentTargetEpochMillis = null
+        _progress.value = null
+    }
+
+    /**
+     * 页面主动取消任务时调用，立刻清掉等待进度。
+     */
+    fun clear() {
         currentTargetEpochMillis = null
         _progress.value = null
     }

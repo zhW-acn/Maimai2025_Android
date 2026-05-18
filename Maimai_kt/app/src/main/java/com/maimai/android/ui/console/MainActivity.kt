@@ -26,6 +26,7 @@ import com.maimai.android.ui.console.actions.ConsoleActionId
 import com.maimai.android.ui.console.actions.buildConsoleActions
 import com.maimai.android.databinding.ActivityMainBinding
 import com.maimai.android.logging.AppMaimaiLogger
+import com.maimai.android.ui.console.dialog.ManualLogoutDialog
 import com.maimai.android.ui.console.dialog.TicketQueryDialog
 import com.maimai.android.ui.console.dialog.UploadScoreDialog
 import com.maimai.android.ui.console.session.ConsoleUiState
@@ -81,6 +82,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupActionsList()
+        setupLogoutLongClick()
         bindBackPressed()
         requestNotificationPermissionIfNeeded()
         collectState()
@@ -179,6 +181,7 @@ class MainActivity : AppCompatActivity() {
         when (actionId) {
             ConsoleActionId.UploadScore -> showUploadScoreDialog()
             ConsoleActionId.ChargeTicket -> viewModel.buyTicket()
+            ConsoleActionId.Point -> viewModel.uploadPoint()
         }
     }
 
@@ -187,12 +190,14 @@ class MainActivity : AppCompatActivity() {
      */
     private fun handleActionLongClick(actionId: ConsoleActionId): Boolean {
         return when (actionId) {
+            ConsoleActionId.UploadScore -> false
+
             ConsoleActionId.ChargeTicket -> {
                 showTicketQueryDialog()
                 true
             }
 
-            ConsoleActionId.UploadScore -> false
+            ConsoleActionId.Point -> false
         }
     }
 
@@ -206,6 +211,22 @@ class MainActivity : AppCompatActivity() {
                 intent.action = null
             }
         }
+    }
+
+    private fun setupLogoutLongClick() {
+        binding.logoutButton.setOnLongClickListener {
+            showManualLogoutDialog()
+            true
+        }
+    }
+
+    private fun showManualLogoutDialog() {
+        ManualLogoutDialog(
+            activity = this,
+            initialUserId = if (latestState.loggedIn) latestState.userId else "",
+            initialCookie = if (latestState.loggedIn) latestState.cookieStatus else "",
+            onSubmit = viewModel::logoutByUserIdCookie,
+        ).show()
     }
 
     /**

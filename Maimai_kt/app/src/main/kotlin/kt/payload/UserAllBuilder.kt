@@ -140,7 +140,7 @@ class UserAllBuilder(private val config: ClientConfig) {
     private fun buildUserData(
         loginTimestamp: Long,
         source: Map<String, Any?>,
-        lastPlayDate: String
+        lastPlayDate: String,
     ): MutableMap<String, Any?> {
         val copiedFields = listOf(
             PayloadKeys.CHARA_LOCK_SLOT,

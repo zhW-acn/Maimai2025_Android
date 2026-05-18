@@ -131,7 +131,7 @@ class TitleApiClient(
         cookie: Map<String, String>
     ): MutableMap<String, Any?> {
         waitBeforePostWithCountdown(
-            waitMillis = config.waitBeforeUpsertMillis,
+            waitMillis = config.currentWaitBeforeUpsertMillis(),
             label = ApiNames.UPSERT_USER_ALL,
             logger = logger,
             observer = config.postDelayObserver,
@@ -146,7 +146,7 @@ class TitleApiClient(
         cookie: Map<String, String>
     ): MutableMap<String, Any?> {
         waitBeforePostWithCountdown(
-            waitMillis = config.waitBeforeUpsertMillis,
+            waitMillis = config.currentWaitBeforeUpsertMillis(),
             label = ApiNames.UPSERT_CHARGE_LOG,
             logger = logger,
             observer = config.postDelayObserver,

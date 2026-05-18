@@ -1,4 +1,4 @@
-package com.maimai.android.ui.console.dialog
+package com.maimai.android.enums
 
 import androidx.annotation.StringRes
 import com.maimai.android.R
