@@ -5,6 +5,8 @@
     <data>
         <import type="android.view.View" />
 
+        <import type="kt.constants.AimeConstants" />
+
         <variable
             name="viewModel"
             type="com.maimai.android.ui.console.session.MaimaiConsoleViewModel" />
@@ -80,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:enabled="@{!state.busy &amp;&amp; !state.loggedIn &amp;&amp; state.qrCode.length() > 0}"
+                android:enabled="@{!state.busy &amp;&amp; !state.loggedIn &amp;&amp; state.qrCode.startsWith(AimeConstants.SGWC_PREFIX)}"
                 android:onClick="@{() -> viewModel.login()}"
                 android:text="@string/action_login"
                 app:layout_constraintEnd_toStartOf="@id/logoutButton"

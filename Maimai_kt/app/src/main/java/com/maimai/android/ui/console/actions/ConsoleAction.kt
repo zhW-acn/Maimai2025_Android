@@ -16,6 +16,7 @@ enum class ConsoleActionId {
 fun buildConsoleActions(
     enabled: Boolean,
     loggedIn: Boolean,
+    accessBlocked: Boolean,
 ): List<ConsoleAction> =
     listOf(
         ConsoleAction(
@@ -27,13 +28,13 @@ fun buildConsoleActions(
             id = ConsoleActionId.ChargeTicket,
             titleRes = R.string.action_charge_ticket,
             enabled = enabled,
-            longClickEnabled = true,
+            longClickEnabled = !accessBlocked,
         ),
         ConsoleAction(
             id = ConsoleActionId.Point,
             titleRes = R.string.action_point,
             enabled = enabled,
-            longClickEnabled = loggedIn,
+            longClickEnabled = loggedIn && !accessBlocked,
         ),
     )
 

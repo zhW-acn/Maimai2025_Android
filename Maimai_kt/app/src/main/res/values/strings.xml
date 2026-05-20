@@ -79,6 +79,7 @@
     <string name="status_operation_cancelled">当前任务已取消</string>
     <string name="status_manual_logout_running">正在手动登出</string>
     <string name="status_manual_logout_completed">已登出指定用户：%1$d</string>
+    <string name="status_access_blocked_need_logout">用户不在白名单内，请手动登出</string>
 
     <string name="error_qrcode_required">请输入二维码字符串</string>
     <string name="error_login_playing">正在游玩中，请稍后再试</string>
@@ -90,6 +91,7 @@
     <string name="error_cookie_invalid">Cookie 格式不正确，请输入类似 JSESSIONID=xxx 的内容</string>
     <string name="error_logout_not_allowed">尚未执行 upsertUserAll，不能登出。请先完成一个 upsertUserAll 操作，或等待登录满 60 秒。</string>
     <string name="error_login_required">请先登录</string>
+    <string name="error_user_not_in_whitelist">该用户不在白名单内：%1$d</string>
 
     <string name="log_notification_permission_granted">通知权限已允许，接口完成后可以发送结果通知</string>
     <string name="log_notification_permission_denied">通知权限未允许，接口完成后不会显示系统通知</string>
@@ -103,6 +105,7 @@
     <string name="log_clipboard_qrcode_filled">已从剪贴板自动填入 SGWCMAID 二维码文本</string>
     <string name="log_login_start">开始登录</string>
     <string name="log_login_success">登录成功，userId=%1$d</string>
+    <string name="log_user_not_in_whitelist">用户不在白名单内：%1$d</string>
     <string name="log_logout_rejected_no_upsert">拒绝登出：当前会话还没有成功执行 upsertUserAll</string>
     <string name="log_operation_start">%1$s 开始执行</string>
     <string name="log_operation_success">%1$s 成功，upsertUserAll 已完成</string>
@@ -140,6 +143,8 @@
     <string name="dialog_stay">留在页面</string>
     <string name="dialog_cannot_logout_title">还不能登出</string>
     <string name="dialog_cannot_logout_message">本次登录还没有成功执行 upsertUserAll。登录满 60 秒后可以手动登出；如果正在等待接口倒计时，可以先取消当前任务。</string>
+    <string name="dialog_whitelist_blocked_title">已登录，需要手动登出</string>
+    <string name="dialog_whitelist_blocked_message">当前用户不在白名单内，给你拉小黑屋了。</string>
     <string name="dialog_background_title">提示</string>
     <string name="dialog_background_message">请打开“允许完全后台行为”，否则切到后台时无法完成任务。如果不允许，只有切回前台后任务才能继续。也记得打开通知权限，开启后可以在通知栏查看进度。</string>
     <string name="dialog_background_open_settings">去设置</string>

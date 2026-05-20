@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var actionAdapter: ConsoleActionAdapter
     private var latestState = ConsoleUiState()
+    private var whitelistBlockedDialogUserId: String? = null
 
     /**
      * Activity 创建时初始化 Binding、按钮列表、权限请求和状态监听。
@@ -170,8 +171,9 @@ class MainActivity : AppCompatActivity() {
     private fun updateActions(state: ConsoleUiState) {
         actionAdapter.submitList(
             buildConsoleActions(
-                enabled = !state.busy && state.loggedIn,
+                enabled = !state.busy && state.loggedIn && !state.accessBlocked,
                 loggedIn = state.loggedIn,
+                accessBlocked = state.accessBlocked,
             )
         )
     }
@@ -200,8 +202,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             ConsoleActionId.Point -> {
-                if (!latestState.loggedIn) {
-                    logger.info(getString(R.string.error_login_required))
+                if (!latestState.loggedIn || latestState.accessBlocked) {
+                    logger.info(getString(R.string.status_access_blocked_need_logout))
                     return true
                 }
                 showUploadPointDialog()
@@ -273,6 +275,22 @@ class MainActivity : AppCompatActivity() {
             initialUserId = if (latestState.loggedIn) currentUserId else null,
             load = viewModel::queryTicketForDialog,
         ).show()
+    }
+
+    private fun showWhitelistBlockedDialogIfNeeded(state: ConsoleUiState) {
+        if (!state.accessBlocked) {
+            whitelistBlockedDialogUserId = null
+            return
+        }
+        if (whitelistBlockedDialogUserId == state.userId) {
+            return
+        }
+
+        whitelistBlockedDialogUserId = state.userId
+        AlertDialog.Builder(this)
+            .setTitle(R.string.dialog_whitelist_blocked_title)
+            .setMessage(R.string.dialog_whitelist_blocked_message)
+            .show()
     }
 
     /**
@@ -399,7 +417,17 @@ class MainActivity : AppCompatActivity() {
                     return
                 }
 
-                if (latestState.upsertUserAllCompleted || latestState.logoutAllowedByTimeout) {
+                if (latestState.accessBlocked) {
+                    AlertDialog.Builder(this@MainActivity)
+                        .setTitle(R.string.dialog_whitelist_blocked_title)
+                        .setMessage(R.string.dialog_whitelist_blocked_message)
+                        .setPositiveButton(R.string.dialog_logout_and_exit) { _, _ ->
+                            viewModel.logout()
+                            finish()
+                        }
+                        .setNegativeButton(R.string.dialog_stay, null)
+                        .show()
+                } else if (latestState.upsertUserAllCompleted || latestState.logoutAllowedByTimeout) {
                     AlertDialog.Builder(this@MainActivity)
                         .setTitle(R.string.dialog_logged_in_title)
                         .setMessage(R.string.dialog_logged_in_message)
@@ -432,6 +460,7 @@ class MainActivity : AppCompatActivity() {
                         latestState = state
                         binding.state = state
                         updateActions(state)
+                        showWhitelistBlockedDialogIfNeeded(state)
                     }
                 }
                 launch {

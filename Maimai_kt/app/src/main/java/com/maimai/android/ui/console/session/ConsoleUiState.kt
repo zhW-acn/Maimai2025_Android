@@ -16,6 +16,9 @@ data class ConsoleUiState(
     /** 当前是否持有 LoginSession。 */
     val loggedIn: Boolean = false,
 
+    /** 已经登录，但用户不在白名单内，只允许手动登出。 */
+    val accessBlocked: Boolean = false,
+
     /**
      * 本次登录后是否已经成功执行过 upsertUserAll。
      *

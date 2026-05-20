@@ -1,12 +1,15 @@
 package com.maimai.android.ui.console.session
 
-import android.graphics.Point
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.Utils
 import com.maimai.android.R
 import com.maimai.android.logging.AppMaimaiLogger
 import com.maimai.android.notification.OperationResultNotifier
+import com.maimai.android.security.UserWhitelist
 import kt.error.MaimaiLoginException
 import kt.payload.CharaDetail
 import kt.payload.MusicDetail
@@ -115,6 +118,10 @@ class MaimaiConsoleViewModel @Inject constructor(
             runBusy(text(R.string.status_logging_in)) {
                 logger.info(text(R.string.log_login_start))
                 val loginSession = actions.sessions.loginByQr(qrCode)
+                if (!isUserInWhitelist(loginSession.userId)) {
+                    rejectNonWhitelistedUser(loginSession)
+                    return@runBusy
+                }
 
                 session = loginSession
                 upsertUserAllCompleted = false
@@ -129,6 +136,7 @@ class MaimaiConsoleViewModel @Inject constructor(
                     it.copy(
                         busy = false,
                         loggedIn = true,
+                        accessBlocked = false,
                         upsertUserAllCompleted = false,
                         logoutAllowedByTimeout = false,
                         status = text(R.string.status_logged_in_waiting_upsert),
@@ -160,7 +168,7 @@ class MaimaiConsoleViewModel @Inject constructor(
             markLoggedOut(text(R.string.status_not_logged_in))
             return
         }
-        if (!upsertUserAllCompleted && !logoutAllowedByTimeout) {
+        if (!state.value.accessBlocked && !upsertUserAllCompleted && !logoutAllowedByTimeout) {
             setError(text(R.string.error_logout_not_allowed))
             logger.info(text(R.string.log_logout_rejected_no_upsert))
             return
@@ -284,6 +292,10 @@ class MaimaiConsoleViewModel @Inject constructor(
             setError(text(R.string.error_login_required))
             return
         }
+        if (state.value.accessBlocked) {
+            setError(text(R.string.status_access_blocked_need_logout))
+            return
+        }
 
         currentOperationJob = viewModelScope.launch {
             runBusy(text(R.string.status_operation_running, text(R.string.action_charge_ticket))) {
@@ -305,6 +317,9 @@ class MaimaiConsoleViewModel @Inject constructor(
      */
     suspend fun queryTicketForDialog(userId: Long? = null): TicketQueryResult {
         val activeSession = session
+        if (state.value.accessBlocked) {
+            throw IllegalStateException(text(R.string.status_access_blocked_need_logout))
+        }
         val queryUserId = activeSession?.userId
             ?: userId
             ?: throw IllegalStateException("请填写用户 ID")
@@ -325,6 +340,10 @@ class MaimaiConsoleViewModel @Inject constructor(
         val activeSession = session
         if (activeSession == null) {
             setError(text(R.string.error_login_required))
+            return
+        }
+        if (state.value.accessBlocked) {
+            setError(text(R.string.status_access_blocked_need_logout))
             return
         }
 
@@ -534,6 +553,60 @@ class MaimaiConsoleViewModel @Inject constructor(
     }
 
     /**
+     * 白名单拦截：用户 ID 不被允许时，先保留 LoginSession，方便用户手动登出；
+     * 同时封锁后续业务入口，避免继续调用 upsert、发票等接口。
+     */
+    private fun rejectNonWhitelistedUser(loginSession: LoginSession) {
+        val userId = loginSession.userId
+        val message = text(R.string.error_user_not_in_whitelist, userId)
+
+        session = loginSession
+        upsertUserAllCompleted = false
+        logoutAllowedByTimeout = true
+        currentOperationJob = null
+        cancelNoUpsertLogoutReminder()
+        upsertDelayMonitor.clear()
+        operationResultNotifier.cancelUpsertProgress()
+        clearClipboard()
+
+        logger.info(text(R.string.log_user_not_in_whitelist, userId))
+        _state.update {
+            it.copy(
+                busy = false,
+                loggedIn = true,
+                accessBlocked = true,
+                upsertUserAllCompleted = false,
+                logoutAllowedByTimeout = true,
+                qrCode = message,
+                status = text(R.string.status_access_blocked_need_logout),
+                userId = userId.toString(),
+                timestamp = loginSession.timestamp.toString(),
+                cookieStatus = loginSession.cookie.toString(),
+                tokenStatus = loginSession.token,
+                upsertStatus = text(R.string.status_access_blocked_need_logout),
+                upsertWaiting = false,
+                upsertWaitRemainingSeconds = 0,
+                upsertWaitTotalSeconds = 0,
+                upsertWaitProgress = 0,
+                upsertWaitText = "",
+                lastError = message,
+            )
+        }
+    }
+
+    /**
+     * 清空剪贴板，避免同一个未授权二维码又被页面自动填回来。
+     */
+    private fun clearClipboard() {
+        val clipboard = Utils.getApp()
+            .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText("", ""))
+    }
+
+    private fun isUserInWhitelist(userId: Long): Boolean =
+        UserWhitelist.contains(userId)
+
+    /**
      * 登录后 60 秒仍没有 upsertUserAll，就发通知提醒用户点击登出。
      */
     private fun scheduleNoUpsertLogoutReminder(userId: Long, deadlineEpochMillis: Long) {
@@ -606,6 +679,7 @@ class MaimaiConsoleViewModel @Inject constructor(
             it.copy(
                 busy = false,
                 loggedIn = false,
+                accessBlocked = false,
                 upsertUserAllCompleted = false,
                 logoutAllowedByTimeout = false,
                 status = status,
