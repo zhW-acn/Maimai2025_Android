@@ -26,6 +26,12 @@
     <string name="action_charge_ticket">发票 6 | 长按查票</string>
     <string name="action_upload_point">更改舞里程</string>
     <string name="action_point">舞里程99999</string>
+    <string name="action_character_level">旅行伙伴等级</string>
+    <string name="action_character_level1">旅行伙伴1</string>
+    <string name="action_character_level2">旅行伙伴2</string>
+    <string name="action_character_level3">旅行伙伴3</string>
+    <string name="action_character_level4">旅行伙伴4</string>
+    <string name="action_character_level5">旅行伙伴5</string>
     <string name="action_change_version">切换版本</string>
     <string name="dialog_upload_score_title">上传成绩</string>
     <string name="dialog_upload_score_confirm">上传</string>
@@ -41,6 +47,7 @@
     <string name="hint_deluxscore_max">DX 分上限</string>
     <string name="error_upload_score_form_required">请填写歌曲 ID、达成率和 DX 分上限</string>
     <string name="error_charge_ticket_form_required">请填写票券 ID</string>
+    <string name="error_character_level_required">请填写 5 个旅行伙伴等级，范围 0-9999</string>
     <string name="score_level_basic">基础</string>
     <string name="score_level_advanced">高级</string>
     <string name="score_level_expert">专家</string>

@@ -1,4 +1,4 @@
-package com.okaca.maimai.android.ui.console.session
+﻿package com.okaca.maimai.android.ui.console.session
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -259,7 +259,7 @@ class MaimaiConsoleViewModel @Inject constructor(
     }
 
     /**
-     * 根据弹窗表单传入的歌曲成绩上传 upsertUserAll。
+     * 更改舞里程
      */
     fun uploadPoint(
         point: Int? = 99999
@@ -278,6 +278,34 @@ class MaimaiConsoleViewModel @Inject constructor(
                 loginTimestamp = activeSession.timestamp,
                 loginResult = activeSession.login,
                 music = MusicDetail.point(),
+                extra = patch
+            )
+        }
+    }
+
+    /**
+     * 旅行伙伴
+     */
+    fun uploadCharas(
+        chara: List<Int>
+    ) {
+        runOperationInViewModel(text(R.string.action_character_level)) { activeSession ->
+            val patch = mapOf(
+                PayloadKeys.USER_PLAYLOG_LIST to listOf(
+                    mapOf(
+                        PayloadKeys.CHARACTER_LEVEL_1 to chara[0],
+                        PayloadKeys.CHARACTER_LEVEL_2 to chara[1],
+                        PayloadKeys.CHARACTER_LEVEL_3 to chara[2],
+                        PayloadKeys.CHARACTER_LEVEL_4 to chara[3],
+                        PayloadKeys.CHARACTER_LEVEL_5 to chara[4],
+                    )
+                )
+            )
+            actions.scores.upload(
+                userId = activeSession.userId,
+                loginTimestamp = activeSession.timestamp,
+                loginResult = activeSession.login,
+                music = MusicDetail.chara(),
                 extra = patch
             )
         }

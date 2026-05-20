@@ -68,6 +68,18 @@ data class MusicDetail(
             ComboStatus.AllPerfectPlus.apiValue,
             SyncStatus.FullSyncDxPlus.apiValue
         )
+
+        /**
+         * 旅行伙伴 绿谱 Transcend Lights 理论
+         */
+        fun chara(): MusicDetail = MusicDetail(
+            11451,
+            ScoreLevel.Basic.apiValue,
+            1,
+            101_0000,
+            ComboStatus.AllPerfectPlus.apiValue,
+            SyncStatus.FullSyncDxPlus.apiValue
+        )
     }
 }
 

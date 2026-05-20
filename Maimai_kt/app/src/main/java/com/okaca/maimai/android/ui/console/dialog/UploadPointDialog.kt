@@ -1,4 +1,4 @@
-package com.okaca.maimai.android.ui.console.dialog
+﻿package com.okaca.maimai.android.ui.console.dialog
 
 import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
@@ -35,7 +35,6 @@ class UploadPointDialog(
     }
 
     private fun bindDefaults(binding: DialogUploadPointBinding) {
-        // EditText.setText(Int) 会被当成字符串资源 ID，这里必须转成文本。
         val defaultPoint = Point.MAX.toString()
         binding.inputNum.setText(defaultPoint)
         binding.inputNum.setSelection(defaultPoint.length)

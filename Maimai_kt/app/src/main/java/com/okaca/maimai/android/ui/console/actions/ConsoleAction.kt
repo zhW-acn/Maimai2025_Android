@@ -1,4 +1,4 @@
-package com.okaca.maimai.android.ui.console.actions
+﻿package com.okaca.maimai.android.ui.console.actions
 
 import androidx.annotation.StringRes
 import com.okaca.maimai.android.R
@@ -6,7 +6,8 @@ import com.okaca.maimai.android.R
 enum class ConsoleActionId {
     UploadScore,
     ChargeTicket,
-    Point
+    Point,
+    CharacterLevels,
 }
 
 
@@ -35,6 +36,12 @@ fun buildConsoleActions(
             titleRes = R.string.action_point,
             enabled = enabled,
             longClickEnabled = loggedIn && !accessBlocked,
+        ),
+        ConsoleAction(
+            id = ConsoleActionId.CharacterLevels,
+            titleRes = R.string.action_character_level,
+            enabled = enabled,
+            longClickEnabled = false,
         ),
     )
 

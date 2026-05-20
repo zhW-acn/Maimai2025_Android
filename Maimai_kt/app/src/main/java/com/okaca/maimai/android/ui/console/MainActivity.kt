@@ -1,4 +1,4 @@
-package com.okaca.maimai.android.ui.console
+﻿package com.okaca.maimai.android.ui.console
 
 import android.Manifest
 import android.content.ClipboardManager
@@ -28,6 +28,7 @@ import com.okaca.maimai.android.databinding.ActivityMainBinding
 import com.okaca.maimai.android.logging.AppMaimaiLogger
 import com.okaca.maimai.android.ui.console.dialog.ManualLogoutDialog
 import com.okaca.maimai.android.ui.console.dialog.TicketQueryDialog
+import com.okaca.maimai.android.ui.console.dialog.UploadCharasDialog
 import com.okaca.maimai.android.ui.console.dialog.UploadPointDialog
 import com.okaca.maimai.android.ui.console.dialog.UploadScoreDialog
 import com.okaca.maimai.android.ui.console.session.ConsoleUiState
@@ -186,6 +187,7 @@ class MainActivity : AppCompatActivity() {
             ConsoleActionId.UploadScore -> showUploadScoreDialog()
             ConsoleActionId.ChargeTicket -> viewModel.buyTicket()
             ConsoleActionId.Point -> viewModel.uploadPoint()
+            ConsoleActionId.CharacterLevels -> showUploadCharasDialog()
         }
     }
 
@@ -194,8 +196,6 @@ class MainActivity : AppCompatActivity() {
      */
     private fun handleActionLongClick(actionId: ConsoleActionId): Boolean {
         return when (actionId) {
-            ConsoleActionId.UploadScore -> false
-
             ConsoleActionId.ChargeTicket -> {
                 showTicketQueryDialog()
                 true
@@ -209,6 +209,7 @@ class MainActivity : AppCompatActivity() {
                 showUploadPointDialog()
                 true
             }
+            else -> false
         }
     }
 
@@ -262,6 +263,19 @@ class MainActivity : AppCompatActivity() {
             onSubmit = {
                 viewModel.uploadPoint(it)
             },
+        ).show()
+    }
+
+    /**
+     * 旅行伙伴
+     */
+    private fun showUploadCharasDialog() {
+        UploadCharasDialog(
+            activity = this,
+            onInvalidInput = {
+                logger.info(getString(R.string.error_character_level_required))
+            },
+            onSubmit = viewModel::uploadCharas,
         ).show()
     }
 
