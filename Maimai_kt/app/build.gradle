@@ -14,14 +14,14 @@ plugins {
 
 android {
     // namespace 是 R、BuildConfig、ViewBinding 等生成类所属的包名。
-    namespace 'com.maimai.android'
+    namespace 'com.okaca.maimai.android'
 
     // compileSdk 表示使用 Android 34 的 API 编译，对应 Android 14。
     compileSdk 34
 
     defaultConfig {
         // applicationId 是安装到手机后的唯一应用 ID。
-        applicationId 'com.maimai.android'
+        applicationId 'com.okaca.maimai.android'
 
         // minSdk 是最低支持的 Android 版本。
         minSdk 26
@@ -99,3 +99,4 @@ dependencies {
 
     kapt 'com.google.dagger:hilt-android-compiler:2.51'
 }
+

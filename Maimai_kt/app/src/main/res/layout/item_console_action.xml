@@ -9,7 +9,7 @@
         -->
         <variable
             name="action"
-            type="com.maimai.android.ui.console.actions.ConsoleAction" />
+            type="com.okaca.maimai.android.ui.console.actions.ConsoleAction" />
     </data>
 
     <Button
@@ -20,3 +20,4 @@
         android:enabled="@{action.enabled || action.longClickEnabled}"
         android:text="@{action.titleRes}" />
 </layout>
+

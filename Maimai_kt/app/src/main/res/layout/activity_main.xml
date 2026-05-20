@@ -9,11 +9,11 @@
 
         <variable
             name="viewModel"
-            type="com.maimai.android.ui.console.session.MaimaiConsoleViewModel" />
+            type="com.okaca.maimai.android.ui.console.session.MaimaiConsoleViewModel" />
 
         <variable
             name="state"
-            type="com.maimai.android.ui.console.session.ConsoleUiState" />
+            type="com.okaca.maimai.android.ui.console.session.ConsoleUiState" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -298,3 +298,4 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </layout>
+

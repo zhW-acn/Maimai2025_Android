@@ -1,8 +1,8 @@
 package kt.payload
 
-import com.maimai.android.enums.ComboStatus
-import com.maimai.android.enums.ScoreLevel
-import com.maimai.android.enums.SyncStatus
+import com.okaca.maimai.android.enums.ComboStatus
+import com.okaca.maimai.android.enums.ScoreLevel
+import com.okaca.maimai.android.enums.SyncStatus
 import kt.constants.PayloadKeys
 
 /** UpsertUserAll 鍜?playlog 涓叡鐢ㄧ殑闊充箰鎴愮哗缁撴瀯銆?*/
@@ -70,3 +70,4 @@ data class MusicDetail(
         )
     }
 }
+
