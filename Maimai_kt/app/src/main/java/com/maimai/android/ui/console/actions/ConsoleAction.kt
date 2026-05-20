@@ -13,7 +13,10 @@ enum class ConsoleActionId {
 /**
  * 根据当前页面状态生成动作按钮列表。
  */
-fun buildConsoleActions(enabled: Boolean): List<ConsoleAction> =
+fun buildConsoleActions(
+    enabled: Boolean,
+    loggedIn: Boolean,
+): List<ConsoleAction> =
     listOf(
         ConsoleAction(
             id = ConsoleActionId.UploadScore,
@@ -30,7 +33,7 @@ fun buildConsoleActions(enabled: Boolean): List<ConsoleAction> =
             id = ConsoleActionId.Point,
             titleRes = R.string.action_point,
             enabled = enabled,
-            longClickEnabled = false,
+            longClickEnabled = loggedIn,
         ),
     )
 

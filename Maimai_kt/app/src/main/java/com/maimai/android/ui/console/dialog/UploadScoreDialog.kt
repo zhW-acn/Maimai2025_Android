@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.maimai.android.R
 import com.maimai.android.databinding.DialogUploadScoreBinding
 import com.maimai.android.enums.ComboStatus
-import com.maimai.android.enums.ScoreDialogOption
+import com.maimai.android.enums.ScoreOption
 import com.maimai.android.enums.ScoreLevel
 import com.maimai.android.enums.ScoreRank
 import com.maimai.android.enums.SyncStatus
@@ -66,7 +66,7 @@ class UploadScoreDialog(
     private fun <T> bindSpinner(
         spinner: Spinner,
         options: Array<T>
-    ) where T : Enum<T>, T : ScoreDialogOption {
+    ) where T : Enum<T>, T : ScoreOption {
         val adapter = ArrayAdapter(
             activity,
             android.R.layout.simple_spinner_item,
@@ -80,6 +80,7 @@ class UploadScoreDialog(
 
     /** 给表单设置默认值，减少测试时重复输入。 */
     private fun bindDefaults(binding: DialogUploadScoreBinding) {
+        binding.musicIdInput.setSelection(DEFAULT_MUSIC_ID)
         binding.levelSpinner.setSelection(DEFAULT_LEVEL_INDEX)
         binding.achievementIntegerInput.setText(DEFAULT_ACHIEVEMENT_INTEGER)
         binding.achievementFractionInput.setText(DEFAULT_ACHIEVEMENT_FRACTION)
@@ -121,6 +122,7 @@ class UploadScoreDialog(
     private companion object {
         var DEFAULT_LEVEL_INDEX = ScoreLevel.Master.apiValue
         const val DEFAULT_ACHIEVEMENT_INTEGER = "100"
+        const val DEFAULT_MUSIC_ID = 18
         const val DEFAULT_ACHIEVEMENT_FRACTION = "0000"
         const val DEFAULT_DELUXSCORE_MAX = "0"
         const val ACHIEVEMENT_INTEGER_MULTIPLIER = 10000

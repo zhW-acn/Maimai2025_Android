@@ -8,7 +8,7 @@ import com.maimai.android.R
  *
  * labelRes 用于界面显示，apiValue 用于最终传给 maimai API。
  */
-interface ScoreDialogOption {
+interface ScoreOption {
     val apiValue: Int
 
     @get:StringRes
@@ -21,7 +21,7 @@ interface ScoreDialogOption {
 enum class ScoreLevel(
     override val apiValue: Int,
     override val labelRes: Int,
-) : ScoreDialogOption {
+) : ScoreOption {
     Basic(0, R.string.score_level_basic),
     Advanced(1, R.string.score_level_advanced),
     Expert(2, R.string.score_level_expert),
@@ -37,7 +37,7 @@ enum class ScoreLevel(
 enum class ComboStatus(
     override val apiValue: Int,
     override val labelRes: Int,
-) : ScoreDialogOption {
+) : ScoreOption {
     None(0, R.string.combo_status_none),
     FullCombo(1, R.string.combo_status_full_combo),
     FullComboPlus(2, R.string.combo_status_full_combo_plus),
@@ -51,7 +51,7 @@ enum class ComboStatus(
 enum class SyncStatus(
     override val apiValue: Int,
     override val labelRes: Int,
-) : ScoreDialogOption {
+) : ScoreOption {
     None(0, R.string.sync_status_none),
     FullSync(1, R.string.sync_status_full_sync),
     FullSyncPlus(2, R.string.sync_status_full_sync_plus),

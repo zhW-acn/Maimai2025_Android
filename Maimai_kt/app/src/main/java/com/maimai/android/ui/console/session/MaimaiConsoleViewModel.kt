@@ -254,7 +254,7 @@ class MaimaiConsoleViewModel @Inject constructor(
      * 根据弹窗表单传入的歌曲成绩上传 upsertUserAll。
      */
     fun uploadPoint(
-        point: Int = 99999
+        point: Int? = 99999
     ) {
         runOperationInViewModel(text(R.string.action_upload_point)) { activeSession ->
             val patch = mapOf(

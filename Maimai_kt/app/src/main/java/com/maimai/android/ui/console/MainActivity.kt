@@ -28,6 +28,7 @@ import com.maimai.android.databinding.ActivityMainBinding
 import com.maimai.android.logging.AppMaimaiLogger
 import com.maimai.android.ui.console.dialog.ManualLogoutDialog
 import com.maimai.android.ui.console.dialog.TicketQueryDialog
+import com.maimai.android.ui.console.dialog.UploadPointDialog
 import com.maimai.android.ui.console.dialog.UploadScoreDialog
 import com.maimai.android.ui.console.session.ConsoleUiState
 import com.maimai.android.ui.console.session.MaimaiConsoleViewModel
@@ -170,6 +171,7 @@ class MainActivity : AppCompatActivity() {
         actionAdapter.submitList(
             buildConsoleActions(
                 enabled = !state.busy && state.loggedIn,
+                loggedIn = state.loggedIn,
             )
         )
     }
@@ -186,7 +188,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 处理功能按钮长按事件。现在长按“发票”会打开查票弹窗。
+     * 处理功能按钮长按事件。
      */
     private fun handleActionLongClick(actionId: ConsoleActionId): Boolean {
         return when (actionId) {
@@ -197,7 +199,14 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
-            ConsoleActionId.Point -> false
+            ConsoleActionId.Point -> {
+                if (!latestState.loggedIn) {
+                    logger.info(getString(R.string.error_login_required))
+                    return true
+                }
+                showUploadPointDialog()
+                true
+            }
         }
     }
 
@@ -239,6 +248,18 @@ class MainActivity : AppCompatActivity() {
                 logger.info(getString(R.string.error_upload_score_form_required))
             },
             onSubmit = viewModel::uploadScore,
+        ).show()
+    }
+
+    /**
+     * 更改舞里程
+     */
+    private fun showUploadPointDialog() {
+        UploadPointDialog(
+            activity = this,
+            onSubmit = {
+                viewModel.uploadPoint(it)
+            },
         ).show()
     }
 
