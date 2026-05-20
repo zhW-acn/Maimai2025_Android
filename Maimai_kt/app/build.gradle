@@ -49,6 +49,17 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+    buildTypes {
+        debug {
+            minifyEnabled false  // Debug 不混淆，方便调试
+        }
+        release {
+            minifyEnabled true           // 启用代码混淆
+            shrinkResources true         // 启用资源压缩
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
+        }
+    }
 }
 
 kotlin {
