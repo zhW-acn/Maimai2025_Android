@@ -245,16 +245,14 @@ class MaimaiConsoleViewModel @Inject constructor(
      * 根据弹窗表单传入的歌曲成绩上传 upsertUserAll。
      */
     fun uploadScore(
-        music: MusicDetail,
-        charaDetail: List<CharaDetail> = CharaDetail.defaultList()
+        music: MusicDetail
     ) {
         runOperationInViewModel(text(R.string.action_upload_demo_score)) { activeSession ->
             actions.scores.upload(
                 userId = activeSession.userId,
                 loginTimestamp = activeSession.timestamp,
                 loginResult = activeSession.login,
-                music = music,
-                charaDetail
+                music = music
             )
         }
     }

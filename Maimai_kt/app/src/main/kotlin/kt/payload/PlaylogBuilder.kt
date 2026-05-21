@@ -99,7 +99,7 @@ class PlaylogBuilder(private val config: ClientConfig) {
             /* 姝屾洸鎴愮哗 */
             PayloadKeys.ACHIEVEMENT to music.achievement,
             PayloadKeys.DELUXSCORE to music.deluxscoreMax,
-            PayloadKeys.SCORE_RANK to music.scoreRank,
+            PayloadKeys.SCORE_RANK to music.calculatedScoreRank,
             PayloadKeys.COMBO_STATUS to music.comboStatus,
             PayloadKeys.SYNC_STATUS to music.syncStatus,
             PayloadKeys.MAX_COMBO to if (music.comboStatus == 0) 0 else 1,

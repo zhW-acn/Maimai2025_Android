@@ -2,6 +2,7 @@ package kt.payload
 
 import com.okaca.maimai.android.enums.ComboStatus
 import com.okaca.maimai.android.enums.ScoreLevel
+import com.okaca.maimai.android.enums.ScoreRank
 import com.okaca.maimai.android.enums.SyncStatus
 import kt.constants.PayloadKeys
 
@@ -17,6 +18,9 @@ data class MusicDetail(
     val scoreRank: Int = 0,
     val extNum1: Int = 0,
 ) {
+    val calculatedScoreRank: Int
+        get() = ScoreRank.fromAchievement(achievement).apiValue
+
     /** 转成 Map，方便和动态 UserAll payload 合并。 */
     fun toMap(): MutableMap<String, Any?> =
         mutableMapOf(
@@ -27,7 +31,7 @@ data class MusicDetail(
             PayloadKeys.COMBO_STATUS to comboStatus,
             PayloadKeys.SYNC_STATUS to syncStatus,
             PayloadKeys.DELUXSCORE_MAX to deluxscoreMax,
-            PayloadKeys.SCORE_RANK to scoreRank,
+            PayloadKeys.SCORE_RANK to calculatedScoreRank,
             PayloadKeys.EXT_NUM_1 to extNum1,
         )
 

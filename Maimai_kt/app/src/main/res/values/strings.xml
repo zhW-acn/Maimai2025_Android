@@ -1,8 +1,8 @@
 <resources>
     <!-- 应用名称，会显示在桌面图标和最近任务里。 -->
-    <string name="app_name">舞萌工具</string>
+    <string name="app_name">SDGB155 发包工具</string>
 
-    <string name="main_subtitle">登录后执行一次操作，然后自动登出</string>
+    <string name="main_subtitle">除了发票，每次操作后，记得登出</string>
     <string name="section_qrcode">二维码</string>
     <string name="hint_qrcode">粘贴 SGWCMAID 二维码文本</string>
     <string name="action_login">登录</string>
@@ -25,7 +25,7 @@
     <string name="action_upload_demo_score">上传成绩</string>
     <string name="action_charge_ticket">发票 6 | 长按查票</string>
     <string name="action_upload_point">更改舞里程</string>
-    <string name="action_point">舞里程99999</string>
+    <string name="action_point">舞里程99999 | 长按自定义</string>
     <string name="action_character_level">旅行伙伴等级</string>
     <string name="action_character_level1">旅行伙伴1</string>
     <string name="action_character_level2">旅行伙伴2</string>
@@ -42,29 +42,29 @@
     <string name="hint_achievement_integer">000</string>
     <string name="hint_achievement_fraction">0000</string>
     <string name="achievement_decimal_dot">.</string>
-    <string name="label_combo_status">连击状态</string>
-    <string name="label_sync_status">同步状态</string>
-    <string name="hint_deluxscore_max">DX 分上限</string>
+    <string name="label_combo_status">FC状态</string>
+    <string name="label_sync_status">SYNC状态</string>
+    <string name="hint_deluxscore_max">DX 分</string>
     <string name="error_upload_score_form_required">请填写歌曲 ID、达成率和 DX 分上限</string>
     <string name="error_charge_ticket_form_required">请填写票券 ID</string>
     <string name="error_character_level_required">请填写 5 个旅行伙伴等级，范围 0-9999</string>
-    <string name="score_level_basic">基础</string>
-    <string name="score_level_advanced">高级</string>
-    <string name="score_level_expert">专家</string>
-    <string name="score_level_master">大师</string>
-    <string name="score_level_remaster">重制大师</string>
-    <string name="score_level_strong">强化</string>
-    <string name="score_level_utage">宴会</string>
-    <string name="combo_status_none">无</string>
-    <string name="combo_status_full_combo">全连</string>
-    <string name="combo_status_full_combo_plus">全连+</string>
-    <string name="combo_status_all_perfect">全完美</string>
-    <string name="combo_status_all_perfect_plus">全完美+</string>
-    <string name="sync_status_none">无</string>
-    <string name="sync_status_full_sync">全同步</string>
-    <string name="sync_status_full_sync_plus">全同步+</string>
-    <string name="sync_status_full_sync_dx">全同步 DX</string>
-    <string name="sync_status_full_sync_dx_plus">全同步 DX+</string>
+    <string name="score_level_basic">Basic</string>
+    <string name="score_level_advanced">Advanced</string>
+    <string name="score_level_expert">Expert</string>
+    <string name="score_level_master">Master</string>
+    <string name="score_level_remaster">Re:master</string>
+    <string name="score_level_strong">Strong（SEGA保留字段）</string>
+    <string name="score_level_utage">Utage（宴会、SEGA保留字段）</string>
+    <string name="combo_status_none">None</string>
+    <string name="combo_status_full_combo">FC</string>
+    <string name="combo_status_full_combo_plus">FC+</string>
+    <string name="combo_status_all_perfect">AP</string>
+    <string name="combo_status_all_perfect_plus">AP+</string>
+    <string name="sync_status_none">None</string>
+    <string name="sync_status_full_sync">Full Sync</string>
+    <string name="sync_status_full_sync_plus">Full Sync+</string>
+    <string name="sync_status_full_sync_dx">Full Sync DX</string>
+    <string name="sync_status_full_sync_dx_plus">Full Sync DX+</string>
 
     <string name="status_not_logged_in">未登录</string>
     <string name="status_logging_in">登录中</string>
@@ -120,8 +120,8 @@
     <string name="log_operation_no_upsert_skip_logout">%1$s 未完成 upsertUserAll，不执行登出</string>
     <string name="log_operation_cancel_requested">用户请求取消当前任务</string>
     <string name="log_operation_cancelled">%1$s 已取消</string>
-    <string name="log_ticket_buy_start">开始购买票券：%1$d</string>
-    <string name="log_ticket_buy_success">票券购买成功：%1$d</string>
+    <string name="log_ticket_buy_start">开始发票：%1$d</string>
+    <string name="log_ticket_buy_success">发票成功：%1$d</string>
     <string name="log_query_ticket">执行查票</string>
     <string name="log_query_ticket_success">查票成功</string>
     <string name="log_logout_start">正在登出：%1$d</string>
@@ -153,7 +153,7 @@
     <string name="dialog_whitelist_blocked_title">已登录，需要手动登出</string>
     <string name="dialog_whitelist_blocked_message">当前用户不在白名单内，给你拉小黑屋了。</string>
     <string name="dialog_background_title">提示</string>
-    <string name="dialog_background_message">请打开“允许完全后台行为”，否则切到后台时无法完成任务。如果不允许，只有切回前台后任务才能继续。也记得打开通知权限，开启后可以在通知栏查看进度。</string>
+    <string name="dialog_background_message">请打开“允许完全后台行为”，否则切到后台时无法完成任务。如果不允许，只有切回前台后任务才能继续。还有记得打开通知权限，开启后可以在通知栏查看进度。</string>
     <string name="dialog_background_open_settings">去设置</string>
     <string name="dialog_cancel">取消</string>
     <string name="log_open_background_settings">已打开系统应用详情页，请手动允许后台活动和完全后台行为</string>

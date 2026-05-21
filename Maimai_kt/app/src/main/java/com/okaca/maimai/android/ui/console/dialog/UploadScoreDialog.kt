@@ -10,7 +10,6 @@ import com.okaca.maimai.android.databinding.DialogUploadScoreBinding
 import com.okaca.maimai.android.enums.ComboStatus
 import com.okaca.maimai.android.enums.ScoreOption
 import com.okaca.maimai.android.enums.ScoreLevel
-import com.okaca.maimai.android.enums.ScoreRank
 import com.okaca.maimai.android.enums.SyncStatus
 import kt.payload.MusicDetail
 
@@ -105,7 +104,6 @@ class UploadScoreDialog(
         val comboStatus = ComboStatus.values()[binding.comboStatusSpinner.selectedItemPosition]
         val syncStatus = SyncStatus.values()[binding.syncStatusSpinner.selectedItemPosition]
         val achievement = achievementInteger * ACHIEVEMENT_INTEGER_MULTIPLIER + achievementFraction
-        val scoreRank = ScoreRank.fromAchievement(achievement)
 
         return MusicDetail(
             musicId = musicId,
@@ -114,7 +112,6 @@ class UploadScoreDialog(
             comboStatus = comboStatus.apiValue,
             syncStatus = syncStatus.apiValue,
             deluxscoreMax = deluxscoreMax,
-            scoreRank = scoreRank.apiValue,
         )
     }
 
