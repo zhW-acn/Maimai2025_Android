@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.okaca.maimai.android.R
 import com.okaca.maimai.android.databinding.DialogUploadCharasBinding
 import kt.constants.CharaLevel
+import kt.payload.CharaDetail
 
 /**
  * 旅行伙伴等级弹窗。
@@ -14,7 +15,7 @@ import kt.constants.CharaLevel
 class UploadCharasDialog(
     private val activity: AppCompatActivity,
     private val onInvalidInput: () -> Unit,
-    private val onSubmit: (List<Int>) -> Unit,
+    private val onSubmit: (List<CharaDetail>) -> Unit,
 ) {
     fun show() {
         val binding = DialogUploadCharasBinding.inflate(LayoutInflater.from(activity))
@@ -40,18 +41,14 @@ class UploadCharasDialog(
         dialog.show()
     }
 
-    private fun readLevels(binding: DialogUploadCharasBinding): List<Int>? {
-        val inputs = listOf(
-            binding.input1,
-            binding.input2,
-            binding.input3,
-            binding.input4,
-            binding.input5,
+    private fun readLevels(binding: DialogUploadCharasBinding): List<CharaDetail>? {
+        return listOf(
+            CharaDetail(CharaDetail.CHARA_ID_NONE, binding.input1.readLevelOrNull() ?: return null),
+            CharaDetail(CharaDetail.CHARA_ID_NONE, binding.input2.readLevelOrNull() ?: return null),
+            CharaDetail(CharaDetail.CHARA_ID_NONE, binding.input3.readLevelOrNull() ?: return null),
+            CharaDetail(CharaDetail.CHARA_ID_NONE, binding.input4.readLevelOrNull() ?: return null),
+            CharaDetail(CharaDetail.CHARA_ID_NONE, binding.input5.readLevelOrNull() ?: return null),
         )
-
-        return inputs.map { input ->
-            input.readLevelOrNull() ?: return null
-        }
     }
 
     private fun EditText.readLevelOrNull(): Int? {

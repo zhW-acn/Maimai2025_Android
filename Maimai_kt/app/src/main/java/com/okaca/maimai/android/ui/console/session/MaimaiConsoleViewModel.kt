@@ -13,6 +13,7 @@ import com.okaca.maimai.android.security.UserWhitelist
 import kt.error.MaimaiLoginException
 import kt.payload.CharaDetail
 import kt.payload.MusicDetail
+import kt.payload.UserCharacter
 import kt.service.LoginSession
 import kt.service.MaimaiActions
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -266,10 +267,12 @@ class MaimaiConsoleViewModel @Inject constructor(
     ) {
         runOperationInViewModel(text(R.string.action_upload_point)) { activeSession ->
             val patch = mapOf(
-                PayloadKeys.USER_DATA to listOf(
-                    mapOf(
-                        PayloadKeys.POINT to point,
-                        PayloadKeys.TOTAL_POINT to point,
+                PayloadKeys.UPSERT_USER_ALL to mapOf(
+                    PayloadKeys.USER_DATA to listOf(
+                        mapOf(
+                            PayloadKeys.POINT to point,
+                            PayloadKeys.TOTAL_POINT to point,
+                        )
                     )
                 )
             )
@@ -287,26 +290,16 @@ class MaimaiConsoleViewModel @Inject constructor(
      * 旅行伙伴
      */
     fun uploadCharas(
-        chara: List<Int>
+        chara: List<CharaDetail>
     ) {
         runOperationInViewModel(text(R.string.action_character_level)) { activeSession ->
-            val patch = mapOf(
-                PayloadKeys.USER_PLAYLOG_LIST to listOf(
-                    mapOf(
-                        PayloadKeys.CHARACTER_LEVEL_1 to chara[0],
-                        PayloadKeys.CHARACTER_LEVEL_2 to chara[1],
-                        PayloadKeys.CHARACTER_LEVEL_3 to chara[2],
-                        PayloadKeys.CHARACTER_LEVEL_4 to chara[3],
-                        PayloadKeys.CHARACTER_LEVEL_5 to chara[4],
-                    )
-                )
-            )
             actions.scores.upload(
                 userId = activeSession.userId,
                 loginTimestamp = activeSession.timestamp,
                 loginResult = activeSession.login,
                 music = MusicDetail.chara(),
-                extra = patch
+                charaDetail = chara,
+                userCharacters = chara.map { UserCharacter.fromCharaDetail(it) },
             )
         }
     }

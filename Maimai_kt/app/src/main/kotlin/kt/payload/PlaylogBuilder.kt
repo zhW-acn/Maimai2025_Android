@@ -39,7 +39,14 @@ class PlaylogBuilder(private val config: ClientConfig) {
         now: LocalDateTime,
         track: Int,
     ): Map<String, Any?> {
-        val charaSlot = userData[PayloadKeys.CHARA_SLOT] as List<*>
+        val charaSlot = userData[PayloadKeys.CHARA_SLOT].asIntList()
+        val characterIds = charaDetails.mapIndexed { index, chara ->
+            if (chara.characterId == CharaDetail.CHARA_ID_NONE) {
+                charaSlot.getOrNull(index) ?: CharaDetail.CHARA_ID_NONE
+            } else {
+                chara.characterId
+            }
+        }
         val playerRating = userData[PayloadKeys.PLAYER_RATING]
         return mutableMapOf(
             PayloadKeys.USER_ID to 0,
@@ -74,19 +81,19 @@ class PlaylogBuilder(private val config: ClientConfig) {
             PayloadKeys.PLAYED_USER_NAME_3 to PayloadDefaults.EMPTY,
             PayloadKeys.PLAYED_MUSIC_LEVEL_3 to 0,
             /* 鏃呰浼欎即 */
-            PayloadKeys.CHARACTER_ID_1 to charaDetails[0].characterId,
+            PayloadKeys.CHARACTER_ID_1 to characterIds[0],
             PayloadKeys.CHARACTER_LEVEL_1 to charaDetails[0].characterLevel,
             PayloadKeys.CHARACTER_AWAKENING_1 to charaDetails[0].awake,
-            PayloadKeys.CHARACTER_ID_2 to charaDetails[1].characterId,
+            PayloadKeys.CHARACTER_ID_2 to characterIds[1],
             PayloadKeys.CHARACTER_LEVEL_2 to charaDetails[1].characterLevel,
             PayloadKeys.CHARACTER_AWAKENING_2 to charaDetails[1].awake,
-            PayloadKeys.CHARACTER_ID_3 to charaDetails[2].characterId,
+            PayloadKeys.CHARACTER_ID_3 to characterIds[2],
             PayloadKeys.CHARACTER_LEVEL_3 to charaDetails[2].characterLevel,
             PayloadKeys.CHARACTER_AWAKENING_3 to charaDetails[2].awake,
-            PayloadKeys.CHARACTER_ID_4 to charaDetails[3].characterId,
+            PayloadKeys.CHARACTER_ID_4 to characterIds[3],
             PayloadKeys.CHARACTER_LEVEL_4 to charaDetails[3].characterLevel,
             PayloadKeys.CHARACTER_AWAKENING_4 to charaDetails[3].awake,
-            PayloadKeys.CHARACTER_ID_5 to charaDetails[4].characterId,
+            PayloadKeys.CHARACTER_ID_5 to characterIds[4],
             PayloadKeys.CHARACTER_LEVEL_5 to charaDetails[4].characterLevel,
             PayloadKeys.CHARACTER_AWAKENING_5 to charaDetails[4].awake,
             /* 姝屾洸鎴愮哗 */
@@ -164,4 +171,13 @@ class PlaylogBuilder(private val config: ClientConfig) {
             PayloadKeys.EXT_BOOL_2 to false,
         )
     }
+
+    private fun Any?.asIntList(): List<Int> =
+        (this as? List<*>)?.mapNotNull { value ->
+            when (value) {
+                is Number -> value.toInt()
+                is String -> value.toIntOrNull()
+                else -> null
+            }
+        } ?: emptyList()
 }

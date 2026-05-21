@@ -3,6 +3,8 @@ package kt.service
 import kt.constants.PayloadKeys
 import kt.payload.CharaDetail
 import kt.payload.MusicDetail
+import kt.payload.UserCharacter
+import kt.payload.mergePatch
 
 class PointService(private val fullPlay: FullPlayService) {
     suspend fun upload(
@@ -11,26 +13,26 @@ class PointService(private val fullPlay: FullPlayService) {
         loginResult: Map<String, Any?>,
         music: MusicDetail,
         charaDetail: List<CharaDetail> = CharaDetail.defaultList(),
+        userCharacters: List<UserCharacter> = emptyList(),
         extra: Map<String, Any?> = mapOf(),
     ): MutableMap<String, Any?> {
-        val upsertPatch = mutableMapOf<String, Any?>(
-            PayloadKeys.USER_MUSIC_DETAIL_LIST to listOf(music.toMap()),
-            PayloadKeys.IS_NEW_MUSIC_DETAIL_LIST to "1",
-        ).apply {
-            // extra 表示 upsertUserAll 内层的额外字段，例如 userData、userItemList。
-            putAll(extra)
-        }
-
-        val patch = mapOf(
-            PayloadKeys.UPSERT_USER_ALL to upsertPatch,
+        val patch = mutableMapOf<String, Any?>(
+            PayloadKeys.UPSERT_USER_ALL to mutableMapOf(
+                PayloadKeys.USER_MUSIC_DETAIL_LIST to listOf(music.toMap()),
+                PayloadKeys.IS_NEW_MUSIC_DETAIL_LIST to "1",
+            ),
         )
+        // extra 是整个 upsertUserAll 请求 JSON 的顶层补丁。
+        // 例如可以传 userPlaylogList，也可以传 upsertUserAll.userData。
+        mergePatch(patch, extra)
         return fullPlay.submit(
             userId,
             loginTimestamp,
             loginResult,
             listOf(music),
             patch,
-            charaDetail
+            charaDetail,
+            userCharacters,
         )
     }
 

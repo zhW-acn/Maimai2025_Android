@@ -37,6 +37,7 @@ import kt.constants.AimeConstants
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
  * App 的主页面，也是 MVVM 里的 View。
@@ -235,10 +236,24 @@ class MainActivity : AppCompatActivity() {
     private fun showManualLogoutDialog() {
         ManualLogoutDialog(
             activity = this,
-            initialUserId = if (latestState.loggedIn) latestState.userId else "",
-            initialCookie = if (latestState.loggedIn) latestState.cookieStatus else "",
+            initialUserId = latestLoginUserId(),
+            initialCookie = latestLoginCookie(),
             onSubmit = viewModel::logoutByUserIdCookie,
         ).show()
+    }
+
+    private fun latestLoginUserId(): String {
+        if (latestState.loggedIn && latestState.userId.isUsableLoginValue()) {
+            return latestState.userId
+        }
+        return SPUtils.getInstance(PREFS_NAME).getString(KEY_LAST_LOGIN_USER_ID, "")
+    }
+
+    private fun latestLoginCookie(): String {
+        if (latestState.loggedIn && latestState.cookieStatus.isUsableLoginValue()) {
+            return latestState.cookieStatus
+        }
+        return SPUtils.getInstance(PREFS_NAME).getString(KEY_LAST_LOGIN_COOKIE, "")
     }
 
     /**
@@ -275,7 +290,9 @@ class MainActivity : AppCompatActivity() {
             onInvalidInput = {
                 logger.info(getString(R.string.error_character_level_required))
             },
-            onSubmit = viewModel::uploadCharas,
+            onSubmit = {
+                viewModel.uploadCharas(it)
+            },
         ).show()
     }
 
@@ -417,8 +434,28 @@ class MainActivity : AppCompatActivity() {
         const val INITIAL_BACKGROUND_PERMISSION_DELAY_MILLIS = 500L
         const val PREFS_NAME = "maimai_android_preferences"
         const val KEY_BACKGROUND_PERMISSION_REQUESTED = "background_permission_requested"
+        const val KEY_LAST_LOGIN_USER_ID = "last_login_user_id"
+        const val KEY_LAST_LOGIN_COOKIE = "last_login_cookie"
         const val ACTION_GRID_SPAN_COUNT = 2
     }
+
+    private fun rememberLoginInfoIfNeeded(state: ConsoleUiState) {
+        if (!state.loggedIn) {
+            return
+        }
+        if (!state.userId.isUsableLoginValue() || !state.cookieStatus.isUsableLoginValue()) {
+            return
+        }
+
+        SPUtils.getInstance(PREFS_NAME).apply {
+            Timber.d("Remember login info: $state")
+            put(KEY_LAST_LOGIN_USER_ID, state.userId)
+            put(KEY_LAST_LOGIN_COOKIE, state.cookieStatus)
+        }
+    }
+
+    private fun String.isUsableLoginValue(): Boolean =
+        isNotBlank() && this != "-" && this != getString(R.string.status_none)
 
     private fun bindBackPressed() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -473,6 +510,7 @@ class MainActivity : AppCompatActivity() {
                     viewModel.state.collect { state ->
                         latestState = state
                         binding.state = state
+                        rememberLoginInfoIfNeeded(state)
                         updateActions(state)
                         showWhitelistBlockedDialogIfNeeded(state)
                     }

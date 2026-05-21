@@ -1,4 +1,4 @@
-package com.okaca.maimai.android.ui.console.dialog
+﻿package com.okaca.maimai.android.ui.console.dialog
 
 import android.view.LayoutInflater
 import android.widget.ArrayAdapter
@@ -80,7 +80,6 @@ class UploadScoreDialog(
 
     /** 给表单设置默认值，减少测试时重复输入。 */
     private fun bindDefaults(binding: DialogUploadScoreBinding) {
-        binding.musicIdInput.setSelection(DEFAULT_MUSIC_ID)
         binding.levelSpinner.setSelection(DEFAULT_LEVEL_INDEX)
         binding.achievementIntegerInput.setText(DEFAULT_ACHIEVEMENT_INTEGER)
         binding.achievementFractionInput.setText(DEFAULT_ACHIEVEMENT_FRACTION)
@@ -122,7 +121,6 @@ class UploadScoreDialog(
     private companion object {
         var DEFAULT_LEVEL_INDEX = ScoreLevel.Master.apiValue
         const val DEFAULT_ACHIEVEMENT_INTEGER = "100"
-        const val DEFAULT_MUSIC_ID = 18
         const val DEFAULT_ACHIEVEMENT_FRACTION = "0000"
         const val DEFAULT_DELUXSCORE_MAX = "0"
         const val ACHIEVEMENT_INTEGER_MULTIPLIER = 10000

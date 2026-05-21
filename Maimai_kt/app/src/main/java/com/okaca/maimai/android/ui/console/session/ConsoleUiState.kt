@@ -1,4 +1,4 @@
-package com.okaca.maimai.android.ui.console.session
+﻿package com.okaca.maimai.android.ui.console.session
 
 /**
  * MainActivity 的完整界面状态。
@@ -67,5 +67,10 @@ data class ConsoleUiState(
 
     /** 最近一次错误信息。为 null 时隐藏错误区域。 */
     val lastError: String? = null,
-)
+
+    ) {
+    override fun toString(): String {
+        return "ConsoleUiState(qrCode='$qrCode', busy=$busy, loggedIn=$loggedIn, accessBlocked=$accessBlocked, upsertUserAllCompleted=$upsertUserAllCompleted, logoutAllowedByTimeout=$logoutAllowedByTimeout, status='$status', userId='$userId', timestamp='$timestamp', cookieStatus='$cookieStatus', tokenStatus='$tokenStatus', upsertStatus='$upsertStatus', upsertWaiting=$upsertWaiting, upsertWaitRemainingSeconds=$upsertWaitRemainingSeconds, upsertWaitTotalSeconds=$upsertWaitTotalSeconds, upsertWaitProgress=$upsertWaitProgress, upsertWaitText='$upsertWaitText', lastError=$lastError)"
+    }
+}
 
