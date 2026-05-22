@@ -19,7 +19,7 @@ class ScoreService(private val fullPlay: FullPlayService) {
         val patch = mutableMapOf<String, Any?>(
             PayloadKeys.UPSERT_USER_ALL to mutableMapOf(
                 PayloadKeys.USER_MUSIC_DETAIL_LIST to listOf(music.toMap()),
-                PayloadKeys.IS_NEW_MUSIC_DETAIL_LIST to "1",
+                PayloadKeys.IS_NEW_MUSIC_DETAIL_LIST to "0",
             ),
         )
         // extra 是整个 upsertUserAll 请求 JSON 的顶层补丁。

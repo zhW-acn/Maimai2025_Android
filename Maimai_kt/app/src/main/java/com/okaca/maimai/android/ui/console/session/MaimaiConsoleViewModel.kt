@@ -7,13 +7,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.Utils
 import com.okaca.maimai.android.R
+import com.okaca.maimai.android.enums.ComboStatus
+import com.okaca.maimai.android.enums.ScoreLevel
+import com.okaca.maimai.android.enums.SyncStatus
 import com.okaca.maimai.android.logging.AppMaimaiLogger
 import com.okaca.maimai.android.notification.OperationResultNotifier
 import com.okaca.maimai.android.security.UserWhitelist
 import kt.error.MaimaiLoginException
 import kt.payload.CharaDetail
+import kt.payload.KaleidxScopeGate
 import kt.payload.MusicDetail
 import kt.payload.UserCharacter
+import kt.payload.UserMusicResponse
 import kt.service.LoginSession
 import kt.service.MaimaiActions
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -66,6 +71,7 @@ class MaimaiConsoleViewModel @Inject constructor(
     private var logoutAllowedByTimeout: Boolean = false
     private var noUpsertLogoutReminderJob: Job? = null
     private var currentOperationJob: Job? = null
+    private var userMusicCache: Map<MusicKey, MusicDetail> = emptyMap()
 
     init {
         collectUpsertDelayProgress()
@@ -127,6 +133,7 @@ class MaimaiConsoleViewModel @Inject constructor(
                 session = loginSession
                 upsertUserAllCompleted = false
                 logoutAllowedByTimeout = false
+                userMusicCache = loadUserMusicCacheSafely(loginSession)
                 val loginGuardDeadlineEpochMillis =
                     upsertDelayMonitor.startLoginGuard(LOGIN_GUARD_DURATION_MILLIS)
                 scheduleNoUpsertLogoutReminder(loginSession.userId, loginGuardDeadlineEpochMillis)
@@ -204,6 +211,7 @@ class MaimaiConsoleViewModel @Inject constructor(
                     session = null
                     upsertUserAllCompleted = false
                     logoutAllowedByTimeout = false
+                    userMusicCache = emptyMap()
                     markLoggedOut(text(R.string.status_logged_out))
                 } else {
                     _state.update {
@@ -245,14 +253,16 @@ class MaimaiConsoleViewModel @Inject constructor(
      * 根据弹窗表单传入的歌曲成绩上传 upsertUserAll。
      */
     fun uploadScore(
-        music: MusicDetail
+        music: MusicDetail,
+        manualPlayCount: Int? = null,
     ) {
         runOperationInViewModel(text(R.string.action_upload_demo_score)) { activeSession ->
+            val uploadMusic = music.withAutoPlayCount(manualPlayCount)
             actions.scores.upload(
                 userId = activeSession.userId,
                 loginTimestamp = activeSession.timestamp,
                 loginResult = activeSession.login,
-                music = music
+                music = uploadMusic
             )
         }
     }
@@ -278,7 +288,7 @@ class MaimaiConsoleViewModel @Inject constructor(
                 userId = activeSession.userId,
                 loginTimestamp = activeSession.timestamp,
                 loginResult = activeSession.login,
-                music = MusicDetail.point(),
+                music = MusicDetail.point().withAutoPlayCount(),
                 extra = patch
             )
         }
@@ -295,9 +305,40 @@ class MaimaiConsoleViewModel @Inject constructor(
                 userId = activeSession.userId,
                 loginTimestamp = activeSession.timestamp,
                 loginResult = activeSession.login,
-                music = MusicDetail.chara(),
+                music = MusicDetail.chara().withAutoPlayCount(),
                 charaDetail = chara,
                 userCharacters = chara.map { UserCharacter.fromCharaDetail(it) },
+            )
+        }
+    }
+
+    /**
+     * 上传 KaleidxScope Gate 状态。
+     */
+    fun uploadKaleidxScope(gate: KaleidxScopeGate) {
+        runOperationInViewModel(text(R.string.action_kaleidx_scope)) { activeSession ->
+            val patch = mapOf(
+                PayloadKeys.UPSERT_USER_ALL to mapOf(
+                    PayloadKeys.USER_KALEIDX_SCOPE_LIST to listOf(gate.toMap()),
+                    PayloadKeys.IS_NEW_KALEIDX_SCOPE_LIST to "0",
+                )
+            )
+            val music = MusicDetail(
+                musicId = gate.musicId,
+                level = ScoreLevel.Basic.apiValue,
+                playCount = 1,
+                achievement = 101_0000,
+                comboStatus = ComboStatus.AllPerfectPlus.apiValue,
+                syncStatus = SyncStatus.FullSyncDxPlus.apiValue,
+                deluxscoreMax = 0,
+                extNum1 = 0,
+            )
+            actions.scores.upload(
+                userId = activeSession.userId,
+                loginTimestamp = activeSession.timestamp,
+                loginResult = activeSession.login,
+                music = music.withAutoPlayCount(),
+                extra = patch,
             )
         }
     }
@@ -456,6 +497,7 @@ class MaimaiConsoleViewModel @Inject constructor(
             session = null
             upsertUserAllCompleted = false
             logoutAllowedByTimeout = false
+            userMusicCache = emptyMap()
             val finalStatus =
                 if (succeeded) loggedOutStatus else text(R.string.status_logout_failed_local_session_cleared)
             markLoggedOut(finalStatus)
@@ -582,6 +624,7 @@ class MaimaiConsoleViewModel @Inject constructor(
         session = loginSession
         upsertUserAllCompleted = false
         logoutAllowedByTimeout = true
+        userMusicCache = emptyMap()
         currentOperationJob = null
         cancelNoUpsertLogoutReminder()
         upsertDelayMonitor.clear()
@@ -694,6 +737,7 @@ class MaimaiConsoleViewModel @Inject constructor(
      */
     private fun markLoggedOut(status: String) {
         cancelNoUpsertLogoutReminder()
+        userMusicCache = emptyMap()
         _state.update {
             it.copy(
                 busy = false,
@@ -753,9 +797,68 @@ class MaimaiConsoleViewModel @Inject constructor(
         return cookie
     }
 
+    /**
+     * 登录成功后预先读取歌曲成绩。
+     *
+     * 之后上传同一首同一难度时，就能用“原 playCount + 1”，不用每次都手动填写。
+     */
+    private suspend fun loadUserMusicCacheSafely(activeSession: LoginSession): Map<MusicKey, MusicDetail> =
+        try {
+            loadUserMusicCache(activeSession)
+        } catch (error: Throwable) {
+            logger.error("读取歌曲成绩缓存失败，后续上传将从 playCount=1 开始", error)
+            emptyMap()
+        }
+
+    private suspend fun loadUserMusicCache(activeSession: LoginSession): Map<MusicKey, MusicDetail> {
+        val allDetails = mutableListOf<MusicDetail>()
+        var nextIndex = 0
+        var totalLength = Int.MAX_VALUE
+
+        while (nextIndex < totalLength) {
+            val response = actions.users.getMusic(
+                userId = activeSession.userId,
+                nextIndex = nextIndex,
+                maxCount = USER_MUSIC_CACHE_PAGE_SIZE,
+                cookie = activeSession.cookie,
+            )
+            totalLength = response.length
+            val pageDetails = response.allMusicDetails()
+            if (pageDetails.isEmpty()) {
+                break
+            }
+
+            allDetails += pageDetails
+            nextIndex += response.userMusicList.size
+        }
+
+        logger.info("已缓存歌曲成绩 ${allDetails.size} 条")
+        return allDetails.associateBy { MusicKey(it.musicId, it.level) }
+    }
+
+    /**
+     * 自动补 playCount。
+     *
+     * manualPlayCount 预留给“用户手动指定 playCount”的入口；不传时从登录后缓存里查旧成绩。
+     */
+    private fun MusicDetail.withAutoPlayCount(manualPlayCount: Int? = null): MusicDetail {
+        val newPlayCount = manualPlayCount
+            ?: ((userMusicCache[MusicKey(musicId, level)]?.playCount ?: 0) + 1)
+        return copy(playCount = newPlayCount)
+    }
+
+    private fun UserMusicResponse.allMusicDetails(): List<MusicDetail> =
+        userMusicList.flatMap { it.userMusicDetailList }
+
+    private data class MusicKey(
+        val musicId: Int,
+        val level: Int,
+    )
+
     private companion object {
         const val EMPTY_VALUE = "-"
         const val LOGIN_GUARD_DURATION_MILLIS = 60_000L
+        const val USER_MUSIC_CACHE_PAGE_SIZE = 500
     }
 }
 

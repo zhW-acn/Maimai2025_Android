@@ -26,6 +26,7 @@ import com.okaca.maimai.android.ui.console.actions.ConsoleActionId
 import com.okaca.maimai.android.ui.console.actions.buildConsoleActions
 import com.okaca.maimai.android.databinding.ActivityMainBinding
 import com.okaca.maimai.android.logging.AppMaimaiLogger
+import com.okaca.maimai.android.ui.console.dialog.KaleidxScopeDialog
 import com.okaca.maimai.android.ui.console.dialog.ManualLogoutDialog
 import com.okaca.maimai.android.ui.console.dialog.TicketQueryDialog
 import com.okaca.maimai.android.ui.console.dialog.UploadCharasDialog
@@ -189,6 +190,7 @@ class MainActivity : AppCompatActivity() {
             ConsoleActionId.ChargeTicket -> viewModel.buyTicket()
             ConsoleActionId.Point -> viewModel.uploadPoint()
             ConsoleActionId.CharacterLevels -> showUploadCharasDialog()
+            ConsoleActionId.KaleidxScope -> showKaleidxScopeDialog()
         }
     }
 
@@ -293,6 +295,13 @@ class MainActivity : AppCompatActivity() {
             onSubmit = {
                 viewModel.uploadCharas(it)
             },
+        ).show()
+    }
+
+    private fun showKaleidxScopeDialog() {
+        KaleidxScopeDialog(
+            activity = this,
+            onSubmit = viewModel::uploadKaleidxScope,
         ).show()
     }
 

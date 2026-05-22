@@ -8,6 +8,7 @@ enum class ConsoleActionId {
     ChargeTicket,
     Point,
     CharacterLevels,
+    KaleidxScope,
 }
 
 
@@ -40,6 +41,12 @@ fun buildConsoleActions(
         ConsoleAction(
             id = ConsoleActionId.CharacterLevels,
             titleRes = R.string.action_character_level,
+            enabled = enabled,
+            longClickEnabled = false,
+        ),
+        ConsoleAction(
+            id = ConsoleActionId.KaleidxScope,
+            titleRes = R.string.action_kaleidx_scope,
             enabled = enabled,
             longClickEnabled = false,
         ),

@@ -6,8 +6,8 @@ import kt.constants.LoginCodes
 import kt.constants.PayloadKeys
 import kt.error.MaimaiLoginException
 import kt.log.MaimaiLogger
+import kt.payload.UserMusicResponse
 import kt.payload.asIntValue
-import kt.service.FullPlayService
 import kt.transport.TitleTransport
 import kt.transport.waitBeforePostWithCountdown
 
@@ -59,7 +59,7 @@ class TitleApiClient(
         }
     }
 
-    /** 鐧诲嚭褰撳墠鐢ㄦ埛浼氳瘽銆?*/
+    /** 登出当前用户会话。 */
     suspend fun logout(
         userId: Long,
         timestamp: Long,
@@ -93,7 +93,7 @@ class TitleApiClient(
             cookie
         )
 
-    /** 鐧诲綍鍓嶈鍙栫敤鎴烽瑙堬紝瀵归綈 test.py 閲岀殑 QR 鐧诲綍娴佺▼銆?*/
+    /** 登录前读取用户预览，对齐 test.py 里的 QR 登录流程。 */
     suspend fun getPreview(userId: Long, token: String): MutableMap<String, Any?> =
         request(
             ApiNames.GET_USER_PREVIEW,
@@ -110,10 +110,10 @@ class TitleApiClient(
     suspend fun getUserMusic(
         userId: Long,
         nextIndex: Int = 0,
-        maxCount: Int = 50,
+        maxCount: Int = 1,
         cookie: Map<String, String>? = null
-    ): MutableMap<String, Any?> =
-        request(
+    ): UserMusicResponse =
+        transport.postJsonAs(
             ApiNames.GET_USER_MUSIC,
             mapOf(
                 PayloadKeys.USER_ID to userId,
@@ -121,10 +121,11 @@ class TitleApiClient(
                 PayloadKeys.MAX_COUNT to maxCount
             ),
             userId,
+            UserMusicResponse::class.java,
             cookie,
         )
 
-    /** 鎻愪氦瀹屾暣 UserAll銆?*/
+    /** 提交完整 UserAll。 */
     suspend fun upsertUserAll(
         userId: Long,
         payload: Map<String, Any?>,
@@ -139,7 +140,7 @@ class TitleApiClient(
         return request(ApiNames.UPSERT_USER_ALL, payload, userId, cookie)
     }
 
-    /** 鎻愪氦璐エ璁板綍銆?*/
+    /** 提交购票记录。 */
     suspend fun upsertChargeLog(
         userId: Long,
         payload: Map<String, Any?>,

@@ -94,6 +94,18 @@ class TitleTransport(
         return parsed
     }
 
+    /** 发送请求并把响应解析成指定对象。 */
+    suspend fun <T> postJsonAs(
+        apiName: String,
+        payload: Map<String, Any?>,
+        userAgentExtra: Any,
+        responseClass: Class<T>,
+        cookie: Map<String, String>? = null,
+    ): T {
+        val raw = postRaw(apiName, payload, userAgentExtra, cookie)
+        return JsonSupport.parse(raw.body, responseClass)
+    }
+
     private fun titleHeaders(apiHash: String, userAgentExtra: Any): Map<String, String> =
         mapOf(
             HttpConstants.USER_AGENT to "$apiHash${HttpConstants.TITLE_USER_AGENT_SEPARATOR}$userAgentExtra",
