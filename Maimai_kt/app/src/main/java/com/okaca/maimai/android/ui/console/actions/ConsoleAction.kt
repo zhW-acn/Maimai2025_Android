@@ -9,6 +9,7 @@ enum class ConsoleActionId {
     Point,
     CharacterLevels,
     KaleidxScope,
+    MapSock,
 }
 
 
@@ -47,6 +48,12 @@ fun buildConsoleActions(
         ConsoleAction(
             id = ConsoleActionId.KaleidxScope,
             titleRes = R.string.action_kaleidx_scope,
+            enabled = enabled,
+            longClickEnabled = false,
+        ),
+        ConsoleAction(
+            id = ConsoleActionId.MapSock,
+            titleRes = R.string.action_map_stock,
             enabled = enabled,
             longClickEnabled = false,
         ),

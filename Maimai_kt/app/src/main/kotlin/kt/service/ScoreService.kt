@@ -15,11 +15,12 @@ class ScoreService(private val fullPlay: FullPlayService) {
         charaDetail: List<CharaDetail> = CharaDetail.defaultList(),
         userCharacters: List<UserCharacter> = emptyList(),
         extra: Map<String, Any?> = mapOf(),
+        isNewMusicDetailList: String = "0",
     ): MutableMap<String, Any?> {
         val patch = mutableMapOf<String, Any?>(
             PayloadKeys.UPSERT_USER_ALL to mutableMapOf(
                 PayloadKeys.USER_MUSIC_DETAIL_LIST to listOf(music.toMap()),
-                PayloadKeys.IS_NEW_MUSIC_DETAIL_LIST to "0",
+                PayloadKeys.IS_NEW_MUSIC_DETAIL_LIST to isNewMusicDetailList, // 0 修改，1 插入；以调用方传入为准。
             ),
         )
         // extra 是整个 upsertUserAll 请求 JSON 的顶层补丁。

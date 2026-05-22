@@ -295,6 +295,33 @@ class MaimaiConsoleViewModel @Inject constructor(
     }
 
     /**
+     * 修改剩余里程 MapStock。
+     */
+    fun uploadMapStock(
+        mapStock: Int? = 99999
+    ) {
+        runOperationInViewModel(text(R.string.action_map_stock)) { activeSession ->
+            val patch = mapOf(
+                PayloadKeys.UPSERT_USER_ALL to mapOf(
+                    PayloadKeys.USER_DATA to listOf(
+                        mapOf(
+                            PayloadKeys.MAP_STOCK to mapStock,
+                        )
+                    )
+                )
+            )
+            actions.scores.upload(
+                userId = activeSession.userId,
+                loginTimestamp = activeSession.timestamp,
+                loginResult = activeSession.login,
+                music = MusicDetail.mapStock().withAutoPlayCount(),
+                extra = patch,
+                isNewMusicDetailList = "1",
+            )
+        }
+    }
+
+    /**
      * 旅行伙伴
      */
     fun uploadCharas(

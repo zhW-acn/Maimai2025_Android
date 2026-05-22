@@ -191,6 +191,7 @@ class MainActivity : AppCompatActivity() {
             ConsoleActionId.Point -> viewModel.uploadPoint()
             ConsoleActionId.CharacterLevels -> showUploadCharasDialog()
             ConsoleActionId.KaleidxScope -> showKaleidxScopeDialog()
+            ConsoleActionId.MapSock -> showUploadMapStockDialog()
         }
     }
 
@@ -212,6 +213,7 @@ class MainActivity : AppCompatActivity() {
                 showUploadPointDialog()
                 true
             }
+
             else -> false
         }
     }
@@ -267,7 +269,9 @@ class MainActivity : AppCompatActivity() {
             onInvalidInput = {
                 logger.info(getString(R.string.error_upload_score_form_required))
             },
-            onSubmit = viewModel::uploadScore,
+            onSubmit = {
+                viewModel.uploadScore(it)
+            },
         ).show()
     }
 
@@ -279,6 +283,19 @@ class MainActivity : AppCompatActivity() {
             activity = this,
             onSubmit = {
                 viewModel.uploadPoint(it)
+            },
+        ).show()
+    }
+
+    /**
+     * 修改存储里程 MapStock
+     */
+    private fun showUploadMapStockDialog() {
+        UploadPointDialog(
+            activity = this,
+            titleRes = R.string.action_map_stock,
+            onSubmit = {
+                viewModel.uploadMapStock(it)
             },
         ).show()
     }

@@ -27,6 +27,7 @@
     <string name="action_upload_point">更改舞里程</string>
     <string name="action_point">舞里程99999 | 长按自定义</string>
     <string name="action_kaleidx_scope">KaleidxScope</string>
+    <string name="action_map_stock">修改跑图存储里程MapStock</string>
     <string name="dialog_kaleidx_scope_title">选择 KaleidxScope Gate</string>
     <string name="dialog_kaleidx_scope_options_title">KaleidxScope Gate %1$d</string>
     <string name="label_is_gate_found">发现门</string>

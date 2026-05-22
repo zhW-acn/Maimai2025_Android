@@ -1,6 +1,7 @@
 ﻿package com.okaca.maimai.android.ui.console.dialog
 
 import android.view.LayoutInflater
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.okaca.maimai.android.R
@@ -14,13 +15,15 @@ import kt.constants.Point
  */
 class UploadPointDialog(
     private val activity: AppCompatActivity,
+    @StringRes private val titleRes: Int = R.string.action_upload_point,
     private val onSubmit: (Int?) -> Unit,
 ) {
     fun show() {
         val binding = DialogUploadPointBinding.inflate(LayoutInflater.from(activity))
         bindDefaults(binding)
+        binding.inputNum.hint = activity.getString(titleRes)
         val dialog = AlertDialog.Builder(activity)
-            .setTitle(R.string.action_upload_point)
+            .setTitle(titleRes)
             .setView(binding.root)
             .setPositiveButton(R.string.dialog_upload_score_confirm, null)
             .create()
@@ -40,4 +43,3 @@ class UploadPointDialog(
         binding.inputNum.setSelection(defaultPoint.length)
     }
 }
-
