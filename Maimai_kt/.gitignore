@@ -1,0 +1,25 @@
+# Android / Gradle
+.gradle/
+build/
+local.properties
+captures/
+*.iml
+.idea/
+
+# Signing keystore — NEVER commit the keystore or its passwords
+keystore/
+keystore.properties
+
+# Java/Kotlin build outputs
+*.class
+*.jar
+*.war
+*.ear
+
+# Logs / dumps
+*.log
+*.hprof
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -38,11 +38,14 @@ object DefaultValues {
 
 object CryptoConstants {
     const val AES_KEY_2024 = "n7bx6:@Fg_:2;5E89Phy7AyIcpxEQ:R@"
-    const val AES_KEY_LEGACY = "o2U8F6<adcYl25f_qwx_n]5_qxRcbLN>"
+    const val AES_KEY_2025 = "o2U8F6<adcYl25f_qwx_n]5_qxRcbLN>"
+    const val AES_KEY_LEGACY = "FKM2JX:VjZNK6hc:A0<JU:i5oR7LA]9W"
     const val AES_IV_2024 = ";;KjR1C3hgB1ovXa"
-    const val AES_IV_LEGACY = "AL<G:k:X6Vu7@_U]"
+    const val AES_IV_2025 = "AL<G:k:X6Vu7@_U]"
+    const val AES_IV_LEGACY = "F>;24DjU9W6ZsRH["
     const val OBFUSCATE_2024 = "BEs2D5vW"
-    const val OBFUSCATE_LEGACY = "LatuAa81"
+    const val OBFUSCATE_2025 = "LatuAa81"
+    const val OBFUSCATE_LEGACY = "8bF76dE9"
 }
 
 object ApiNames {
@@ -356,8 +359,8 @@ object PayloadDefaults {
     const val DATE_TIME_FRACTION_SUFFIX = ".0"
     const val GAME_ID = "SDGB"
     const val COUNTRY_CODE = "CHN"
-    const val GAME_PLAYLOG_VERSION = "1.53.00"
-    const val PLAYLOG_VERSION = 1_053_000
+    const val GAME_PLAYLOG_VERSION = "1.55.00"
+    const val PLAYLOG_VERSION = 1_055_000
 }
 
 object VersionDefaults {
@@ -392,7 +395,7 @@ object HttpConstants {
     const val CONTENT_TYPE = "Content-Type"
     const val APPLICATION_JSON = "application/json"
     const val MAI_ENCODING = "Mai-Encoding"
-    const val MAI_ENCODING_VALUE = "1.53"
+    const val MAI_ENCODING_VALUE = "1.55"
     const val ACCEPT_ENCODING = "Accept-Encoding"
     const val CHARSET = "Charset"
     const val UTF_8 = "UTF-8"

@@ -10,6 +10,7 @@ enum class ConsoleActionId {
     CharacterLevels,
     KaleidxScope,
     MapSock,
+    DivingFishUpload,
 }
 
 
@@ -20,6 +21,7 @@ fun buildConsoleActions(
     enabled: Boolean,
     loggedIn: Boolean,
     accessBlocked: Boolean,
+    busy: Boolean,
 ): List<ConsoleAction> =
     listOf(
         ConsoleAction(
@@ -52,11 +54,17 @@ fun buildConsoleActions(
             longClickEnabled = false,
         ),
         ConsoleAction(
-            id = ConsoleActionId.MapSock,
-            titleRes = R.string.action_map_stock,
-            enabled = enabled,
+            id = ConsoleActionId.DivingFishUpload,
+            titleRes = R.string.action_diving_fish_upload,
+            enabled = !busy && !accessBlocked,
             longClickEnabled = false,
         ),
+//        ConsoleAction(
+//            id = ConsoleActionId.MapSock,
+//            titleRes = R.string.action_map_stock,
+//            enabled = enabled,
+//            longClickEnabled = false,
+//        ),
     )
 
 /**

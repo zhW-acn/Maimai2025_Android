@@ -693,7 +693,8 @@ class MaimaiConsoleViewModel @Inject constructor(
     }
 
     private fun isUserInWhitelist(userId: Long): Boolean =
-        UserWhitelist.contains(userId)
+//        UserWhitelist.contains(userId)
+        true
 
     /**
      * 登录后 60 秒仍没有 upsertUserAll，就发通知提醒用户点击登出。

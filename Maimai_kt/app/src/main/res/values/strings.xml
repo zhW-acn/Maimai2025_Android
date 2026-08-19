@@ -1,6 +1,6 @@
 <resources>
     <!-- 应用名称，会显示在桌面图标和最近任务里。 -->
-    <string name="app_name">SDGB155 发包工具</string>
+    <string name="app_name">SDGB156 发包工具</string>
 
     <string name="main_subtitle">除了发票，每次操作后，记得登出</string>
     <string name="section_qrcode">二维码</string>
@@ -164,4 +164,27 @@
     <string name="dialog_background_open_settings">去设置</string>
     <string name="dialog_cancel">取消</string>
     <string name="log_open_background_settings">已打开系统应用详情页，请手动允许后台活动和完全后台行为</string>
+    <string name="action_diving_fish_upload">上传到水鱼</string>
+    <string name="dialog_diving_fish_upload_title">上传舞萌官方数据到水鱼</string>
+    <string name="dialog_diving_fish_upload_confirm">开始</string>
+    <string name="action_stop_diving_fish_proxy">停止</string>
+    <string name="hint_diving_fish_username">水鱼账号</string>
+    <string name="hint_diving_fish_password">水鱼密码</string>
+    <string name="label_diving_fish_difficulties">上传难度</string>
+    <string name="error_diving_fish_form_required">请填写水鱼账号、密码，并至少选择一个难度</string>
+    <string name="log_diving_fish_proxy_started">已启动代理并复制链接，请在微信中粘贴并打开</string>
+    <string name="log_diving_fish_open_wechat_failed">无法自动打开微信，请手动打开微信并粘贴链接</string>
+    <string name="status_diving_fish_upload_started">水鱼上传流程已启动</string>
+    <string name="tab_tech">工具</string>
+    <string name="status_diving_fish_waiting">待开始</string>
+    <string name="status_diving_fish_running">运行中</string>
+    <string name="action_save_diving_fish_account">保存账号</string>
+    <string name="action_select_diving_fish_account">选择账号</string>
+    <string name="action_delete_diving_fish_account">删除账号</string>
+    <string name="dialog_select_diving_fish_account_title">选择水鱼账号</string>
+    <string name="log_diving_fish_account_saved">已保存水鱼账号：%1$s</string>
+    <string name="log_diving_fish_account_selected">已选择水鱼账号：%1$s</string>
+    <string name="log_diving_fish_account_deleted">已删除水鱼账号：%1$s</string>
+    <string name="log_diving_fish_account_empty">暂无已保存的水鱼账号</string>
+    <string name="error_diving_fish_account_required">请先填写水鱼账号和密码</string>
 </resources>
