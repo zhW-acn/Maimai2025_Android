@@ -21,4 +21,6 @@ class MaimaiActions(config: ClientConfig = ClientConfig(), logger: MaimaiLogger 
     val unlocks = UnlockService(fullPlay)
     val tickets = TicketService(api, fullPlay, users)
     val versions = VersionService(fullPlay)
+    val snapshots = SnapshotCaptureService(api, sessions)
+    val reincarnate = ReincarnateService(api, sessions, users, snapshots)
 }

@@ -1,6 +1,5 @@
 package kt.transport
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
@@ -13,8 +12,9 @@ object JsonSupport {
     fun stringify(value: Any): String = mapper.writeValueAsString(value)
 
     /** 把 JSON 对象解析成可继续传递的 Map。 */
+    @Suppress("UNCHECKED_CAST")
     fun parseObject(value: String): MutableMap<String, Any?> =
-        mapper.readValue(value, object : TypeReference<MutableMap<String, Any?>>() {})
+        mapper.readValue(value, MutableMap::class.java) as MutableMap<String, Any?>
 
     /** 把 JSON 对象解析成指定 data class，适合返回结构固定的接口。 */
     fun <T> parse(value: String, responseClass: Class<T>): T =

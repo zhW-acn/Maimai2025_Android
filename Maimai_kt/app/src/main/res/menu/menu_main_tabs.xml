@@ -7,4 +7,8 @@
     <item
         android:id="@+id/tab_diving_fish_upload"
         android:title="@string/action_diving_fish_upload" />
+
+    <item
+        android:id="@+id/tab_reincarnate"
+        android:title="@string/tab_reincarnate" />
 </menu>

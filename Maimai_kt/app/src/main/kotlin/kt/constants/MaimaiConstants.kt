@@ -59,6 +59,15 @@ object ApiNames {
     const val UPSERT_CHARGE_LOG = "UpsertUserChargelogApi"
 }
 
+/** UserLogoutApi 的 type 取值（对应 Net.VO.Mai2.LogoutType，见 Python 版 api/userlogout.py）。 */
+object LogoutTypes {
+    /** 正常登出（带 delayLog）。迁移目标账号用这个。 */
+    const val LOGOUT = 1
+
+    /** 测试登入 / 顶号。抓完源账号数据后用它登出，和 Python 版一致。 */
+    const val TEST_IN = 4
+}
+
 object PayloadKeys {
     const val COOKIE = "_cookie"
     const val USER_ID = "userId"
@@ -151,6 +160,22 @@ object PayloadKeys {
     const val USER_2P_PLAYLOG_DETAIL_LIST = "user2pPlaylogDetailList"
     const val USER_INTIMATE_LIST = "userIntimateList"
     const val USER_SHOP_ITEM_STOCK_LIST = "userShopItemStockList"
+    const val SHOP_ITEM_ID_LIST = "shopItemIdList"
+    const val USER_FAVORITE = "userFavorite"
+    const val USER_FAVORITE_ITEM_LIST = "userFavoriteItemList"
+    const val ITEM_ID_LIST = "itemIdList"
+    const val KIND = "kind"
+    const val IS_ALL_FAVORITE_ITEM = "isAllFavoriteItem"
+    const val LENGTH = "length"
+
+    /** 快照里额外附带的原始副本（收藏夹用，见 Python 版 GetUserFavoriteAll）。 */
+    const val RAW = "_raw"
+    const val RAW_FAVORITE = "_raw_favorite"
+
+    /** 快照的附加字段：抓取失败的节点、账号 userId。 */
+    const val FAILED = "_failed"
+    const val SNAPSHOT_USER_ID = "_userId"
+
     const val USER_GET_POINT_LIST = "userGetPointList"
     const val USER_TRADE_ITEM_LIST = "userTradeItemList"
     const val USER_FAVORITE_MUSIC_LIST = "userFavoritemusicList"

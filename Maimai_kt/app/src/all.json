@@ -1,0 +1,1247 @@
+{
+  "userId": 12236556,
+  "playlogId": 7676007676450444150,
+  "isEventMode": false,
+  "isFreePlay": false,
+  "userPlaylogList": [
+    {
+      "userId": 0,
+      "orderId": 0,
+      "playlogId": 7676007676450444150,
+      "version": 1055000,
+      "placeId": 1187,
+      "placeName": "",
+      "loginDate": 1787209814,
+      "playDate": "2026-08-20",
+      "userPlayDate": "2026-08-20 15:10:15.0",
+      "type": 0,
+      "musicId": 18,
+      "level": 0,
+      "trackNo": 1,
+      "vsMode": 0,
+      "vsUserName": "",
+      "vsStatus": 0,
+      "vsUserRating": 0,
+      "vsUserAchievement": 0,
+      "vsUserGradeRank": 0,
+      "vsRank": 0,
+      "playerNum": 1,
+      "playedUserId1": 0,
+      "playedUserName1": "",
+      "playedMusicLevel1": 0,
+      "playedUserId2": 0,
+      "playedUserName2": "",
+      "playedMusicLevel2": 0,
+      "playedUserId3": 0,
+      "playedUserName3": "",
+      "playedMusicLevel3": 0,
+      "characterId1": 206205,
+      "characterLevel1": -1,
+      "characterAwakening1": 0,
+      "characterId2": 506012,
+      "characterLevel2": -1,
+      "characterAwakening2": 0,
+      "characterId3": 506017,
+      "characterLevel3": -1,
+      "characterAwakening3": 0,
+      "characterId4": 506001,
+      "characterLevel4": -1,
+      "characterAwakening4": 0,
+      "characterId5": 53304,
+      "characterLevel5": -1,
+      "characterAwakening5": 0,
+      "achievement": 1010000,
+      "deluxscore": 0,
+      "scoreRank": 13,
+      "comboStatus": 4,
+      "syncStatus": 4,
+      "maxCombo": 1,
+      "totalCombo": 1,
+      "maxSync": 0,
+      "totalSync": 0,
+      "tapCriticalPerfect": 1,
+      "tapPerfect": 0,
+      "tapGreat": 0,
+      "tapGood": 0,
+      "tapMiss": 0,
+      "holdCriticalPerfect": 0,
+      "holdPerfect": 0,
+      "holdGreat": 0,
+      "holdGood": 0,
+      "holdMiss": 0,
+      "slideCriticalPerfect": 0,
+      "slidePerfect": 0,
+      "slideGreat": 0,
+      "slideGood": 0,
+      "slideMiss": 0,
+      "touchCriticalPerfect": 0,
+      "touchPerfect": 0,
+      "touchGreat": 0,
+      "touchGood": 0,
+      "touchMiss": 0,
+      "breakCriticalPerfect": 0,
+      "breakPerfect": 0,
+      "breakGreat": 0,
+      "breakGood": 0,
+      "breakMiss": 0,
+      "isTap": true,
+      "isHold": true,
+      "isSlide": true,
+      "isTouch": true,
+      "isBreak": true,
+      "isCriticalDisp": true,
+      "isFastLateDisp": true,
+      "fastCount": 0,
+      "lateCount": 0,
+      "isAchieveNewRecord": true,
+      "isDeluxscoreNewRecord": true,
+      "isClear": false,
+      "beforeRating": 15413,
+      "afterRating": 15413,
+      "beforeGrade": 0,
+      "afterGrade": 0,
+      "afterGradeRank": 1,
+      "beforeDeluxRating": 15413,
+      "afterDeluxRating": 15413,
+      "isPlayTutorial": false,
+      "isEventMode": false,
+      "isFreedomMode": false,
+      "playMode": 0,
+      "isNewFree": false,
+      "trialPlayAchievement": -1,
+      "extNum1": 0,
+      "extNum2": 0,
+      "extNum4": 0,
+      "extBool1": false,
+      "extBool2": false
+    }
+  ],
+  "upsertUserAll": {
+    "userData": [
+      {
+        "charaLockSlot": [
+          206205,
+          506012,
+          506017,
+          0,
+          0
+        ],
+        "charaSlot": [
+          206205,
+          506012,
+          506017,
+          506001,
+          53304
+        ],
+        "classRank": 5,
+        "cmLastEmoneyBrand": 0,
+        "cmLastEmoneyCredit": 0,
+        "point": 99999,
+        "totalPoint": 119509,
+        "compatibleCmVersion": "1.55.00",
+        "contentBit": 2146553568,
+        "courseRank": 10,
+        "currentPlayCount": 324,
+        "dailyBonusDate": "1970-01-01 08:00:00",
+        "dailyCourseBonusDate": "2026-08-10 00:00:00",
+        "eventWatchedDate": "2026-08-20 01:17:03",
+        "firstDataVersion": "1.40.01",
+        "firstPlayDate": "2024-07-14 16:27:47",
+        "firstRomVersion": "1.41.00",
+        "frameId": 405102,
+        "friendCode": null,
+        "friendRegistSkip": 0,
+        "gradeRank": 0,
+        "gradeRating": 0,
+        "highestRating": 15505,
+        "iconId": 506012,
+        "lastDataVersion": "1.55.03",
+        "lastLoginDate": "2026-08-20 01:17:03",
+        "lastPairLoginDate": "2026-08-19 21:07:12",
+        "lastRomVersion": "1.55.01",
+        "lastSelectCourse": 552304,
+        "lastTrialPlayDate": "2025-12-04 11:36:10",
+        "mapStock": 0,
+        "musicRating": 15413,
+        "nameplateId": 0,
+        "partnerId": 28,
+        "plateId": 206201,
+        "playCount": 1032,
+        "playerNewRating": 4527,
+        "playerOldRating": 10886,
+        "playerRating": 15413,
+        "selectMapId": 550004,
+        "titleId": 158130,
+        "totalAchievement": 2122212662,
+        "totalAdvancedAchievement": 79251651,
+        "totalAdvancedDeluxscore": 73937,
+        "totalAdvancedSync": 134,
+        "totalAwake": 2842,
+        "totalBasicAchievement": 38028309,
+        "totalBasicDeluxscore": 14009,
+        "totalBasicSync": 64,
+        "totalDeluxscore": 3740400,
+        "totalExpertAchievement": 647060751,
+        "totalExpertDeluxscore": 961677,
+        "totalExpertSync": 1063,
+        "totalMasterAchievement": 1241483415,
+        "totalMasterDeluxscore": 2461344,
+        "totalMasterSync": 1263,
+        "totalReMasterAchievement": 116388536,
+        "totalReMasterDeluxscore": 229433,
+        "totalReMasterSync": 121,
+        "totalSync": 2645,
+        "trophyId": 0,
+        "userName": "ＴＸＸ†ｈ",
+        "accessCode": "",
+        "comboCount": 0,
+        "dateTime": 1787191066,
+        "firstGameId": "SDGB",
+        "helpCount": 0,
+        "isNetMember": 1,
+        "lastAllNetId": 0,
+        "lastClientId": "A63E01C2588",
+        "lastCountCourse": 0,
+        "lastCountryCode": "CHN",
+        "lastGameId": "SDGB",
+        "lastPlaceId": 1187,
+        "lastPlaceName": "",
+        "lastPlayCredit": 1,
+        "lastPlayDate": "2026-08-20 15:10:14.0",
+        "lastPlayMode": 0,
+        "lastRegionId": 3,
+        "lastRegionName": "Shanghai",
+        "lastSelectEMoney": 0,
+        "lastSelectTicket": 0,
+        "playSyncCount": 0,
+        "playVsCount": 0,
+        "renameCredit": 0,
+        "winCount": 0
+      }
+    ],
+    "userExtend": [
+      {
+        "selectMusicId": 818,
+        "selectDifficultyId": 4,
+        "categoryIndex": 2019,
+        "musicIndex": 452,
+        "extraFlag": 1705,
+        "selectScoreType": 0,
+        "selectResultDetails": false,
+        "selectResultScoreViewType": 1,
+        "sortCategorySetting": 2,
+        "sortMusicSetting": 5,
+        "selectedCardList": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "encountMapNpcList": [
+          {
+            "npcId": 0,
+            "musicId": 0
+          },
+          {
+            "npcId": 0,
+            "musicId": 0
+          },
+          {
+            "npcId": 0,
+            "musicId": 0
+          }
+        ],
+        "extendContentBit": 0,
+        "playStatusSetting": 0
+      }
+    ],
+    "userOption": [
+      {
+        "optionKind": 3,
+        "noteSpeed": 29,
+        "slideSpeed": 10,
+        "touchSpeed": 29,
+        "noteSize": 1,
+        "slideSize": 1,
+        "touchSize": 1,
+        "tapDesign": 1,
+        "holdDesign": 1,
+        "slideDesign": 1,
+        "starType": 0,
+        "starRotate": 1,
+        "adjustTiming": 20,
+        "judgeTiming": 20,
+        "mirrorMode": 0,
+        "ansVolume": 10,
+        "tempoVolume": 0,
+        "tapHoldVolume": 5,
+        "touchHoldVolume": 5,
+        "breakVolume": 5,
+        "exVolume": 5,
+        "slideVolume": 5,
+        "breakSe": 11,
+        "slideSe": 11,
+        "exSe": 6,
+        "criticalSe": 1,
+        "tapSe": 0,
+        "headPhoneVolume": 4,
+        "matching": 1,
+        "brightness": 0,
+        "dispRate": 7,
+        "dispCenter": 6,
+        "dispJudge": 10,
+        "dispJudgePos": 5,
+        "dispJudgeTouchPos": 2,
+        "dispChain": 1,
+        "dispBar": 0,
+        "trackSkip": 1,
+        "touchEffect": 0,
+        "outlineDesign": 2,
+        "submonitorAnimation": 2,
+        "submonitorAppeal": 0,
+        "submonitorAchive": 0,
+        "sortTab": 0,
+        "sortMusic": 0,
+        "damageSeVolume": 5,
+        "touchVolume": 5,
+        "outFrameType": 3,
+        "breakSlideVolume": 5
+      }
+    ],
+    "userGhost": [],
+    "userCharacterList": [],
+    "userMapList": [],
+    "userLoginBonusList": [],
+    "userRatingList": [
+      {
+        "rating": 0,
+        "ratingList": [
+          {
+            "musicId": 324,
+            "level": 3,
+            "romVersion": 13009,
+            "achievement": 1005686
+          },
+          {
+            "musicId": 772,
+            "level": 3,
+            "romVersion": 19511,
+            "achievement": 1005272
+          },
+          {
+            "musicId": 11015,
+            "level": 4,
+            "romVersion": 20100,
+            "achievement": 1006590
+          },
+          {
+            "musicId": 11591,
+            "level": 3,
+            "romVersion": 24003,
+            "achievement": 1005416
+          },
+          {
+            "musicId": 11491,
+            "level": 3,
+            "romVersion": 23006,
+            "achievement": 1005405
+          },
+          {
+            "musicId": 11721,
+            "level": 3,
+            "romVersion": 25003,
+            "achievement": 1005222
+          },
+          {
+            "musicId": 10602,
+            "level": 3,
+            "romVersion": 22004,
+            "achievement": 1005064
+          },
+          {
+            "musicId": 11236,
+            "level": 3,
+            "romVersion": 22003,
+            "achievement": 1006373
+          },
+          {
+            "musicId": 11761,
+            "level": 3,
+            "romVersion": 25005,
+            "achievement": 1005134
+          },
+          {
+            "musicId": 11310,
+            "level": 3,
+            "romVersion": 22007,
+            "achievement": 1001244
+          },
+          {
+            "musicId": 11542,
+            "level": 3,
+            "romVersion": 24002,
+            "achievement": 1006929
+          },
+          {
+            "musicId": 11730,
+            "level": 3,
+            "romVersion": 25003,
+            "achievement": 1006761
+          },
+          {
+            "musicId": 11064,
+            "level": 3,
+            "romVersion": 20007,
+            "achievement": 1006629
+          },
+          {
+            "musicId": 11804,
+            "level": 3,
+            "romVersion": 25008,
+            "achievement": 1006477
+          },
+          {
+            "musicId": 11633,
+            "level": 3,
+            "romVersion": 24004,
+            "achievement": 1006350
+          },
+          {
+            "musicId": 11553,
+            "level": 3,
+            "romVersion": 24003,
+            "achievement": 1006332
+          },
+          {
+            "musicId": 11588,
+            "level": 3,
+            "romVersion": 24001,
+            "achievement": 1006202
+          },
+          {
+            "musicId": 701,
+            "level": 3,
+            "romVersion": 19011,
+            "achievement": 1006167
+          },
+          {
+            "musicId": 11590,
+            "level": 3,
+            "romVersion": 24003,
+            "achievement": 1005966
+          },
+          {
+            "musicId": 10288,
+            "level": 3,
+            "romVersion": 20000,
+            "achievement": 1005934
+          },
+          {
+            "musicId": 11566,
+            "level": 3,
+            "romVersion": 23000,
+            "achievement": 1005867
+          },
+          {
+            "musicId": 11447,
+            "level": 3,
+            "romVersion": 23003,
+            "achievement": 1005860
+          },
+          {
+            "musicId": 11527,
+            "level": 3,
+            "romVersion": 24000,
+            "achievement": 1005706
+          },
+          {
+            "musicId": 400,
+            "level": 3,
+            "romVersion": 15013,
+            "achievement": 1005695
+          },
+          {
+            "musicId": 11769,
+            "level": 3,
+            "romVersion": 25005,
+            "achievement": 1005205
+          },
+          {
+            "musicId": 288,
+            "level": 3,
+            "romVersion": 15011,
+            "achievement": 1005205
+          },
+          {
+            "musicId": 11692,
+            "level": 4,
+            "romVersion": 25000,
+            "achievement": 1005097
+          },
+          {
+            "musicId": 753,
+            "level": 3,
+            "romVersion": 19502,
+            "achievement": 1005062
+          },
+          {
+            "musicId": 574,
+            "level": 3,
+            "romVersion": 18010,
+            "achievement": 1005020
+          },
+          {
+            "musicId": 11475,
+            "level": 3,
+            "romVersion": 23006,
+            "achievement": 1004008
+          },
+          {
+            "musicId": 11681,
+            "level": 3,
+            "romVersion": 25003,
+            "achievement": 1002231
+          },
+          {
+            "musicId": 11479,
+            "level": 3,
+            "romVersion": 23007,
+            "achievement": 1001101
+          },
+          {
+            "musicId": 326,
+            "level": 3,
+            "romVersion": 13000,
+            "achievement": 1008567
+          },
+          {
+            "musicId": 11919,
+            "level": 3,
+            "romVersion": 25007,
+            "achievement": 1008412
+          },
+          {
+            "musicId": 11543,
+            "level": 3,
+            "romVersion": 24002,
+            "achievement": 1008000
+          }
+        ],
+        "newRatingList": [
+          {
+            "musicId": 11812,
+            "level": 3,
+            "romVersion": 25502,
+            "achievement": 1005494
+          },
+          {
+            "musicId": 11823,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1002766
+          },
+          {
+            "musicId": 11847,
+            "level": 3,
+            "romVersion": 25501,
+            "achievement": 1009065
+          },
+          {
+            "musicId": 11806,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1006442
+          },
+          {
+            "musicId": 11842,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1003317
+          },
+          {
+            "musicId": 11822,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1002216
+          },
+          {
+            "musicId": 11854,
+            "level": 3,
+            "romVersion": 25501,
+            "achievement": 1001650
+          },
+          {
+            "musicId": 11853,
+            "level": 3,
+            "romVersion": 25501,
+            "achievement": 1005158
+          },
+          {
+            "musicId": 11807,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1004491
+          },
+          {
+            "musicId": 11832,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1004419
+          },
+          {
+            "musicId": 11838,
+            "level": 4,
+            "romVersion": 25500,
+            "achievement": 1003224
+          },
+          {
+            "musicId": 11844,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1002274
+          },
+          {
+            "musicId": 11808,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1002266
+          },
+          {
+            "musicId": 11830,
+            "level": 3,
+            "romVersion": 25501,
+            "achievement": 1001811
+          },
+          {
+            "musicId": 11850,
+            "level": 3,
+            "romVersion": 25501,
+            "achievement": 1005827
+          }
+        ],
+        "nextRatingList": [
+          {
+            "musicId": 11594,
+            "level": 3,
+            "romVersion": 24001,
+            "achievement": 1002927
+          },
+          {
+            "musicId": 11627,
+            "level": 3,
+            "romVersion": 24007,
+            "achievement": 1002904
+          },
+          {
+            "musicId": 11576,
+            "level": 3,
+            "romVersion": 23001,
+            "achievement": 1002023
+          },
+          {
+            "musicId": 11523,
+            "level": 3,
+            "romVersion": 23006,
+            "achievement": 997526
+          },
+          {
+            "musicId": 227,
+            "level": 3,
+            "romVersion": 12005,
+            "achievement": 1000550
+          },
+          {
+            "musicId": 11472,
+            "level": 3,
+            "romVersion": 23006,
+            "achievement": 1004024
+          },
+          {
+            "musicId": 11429,
+            "level": 3,
+            "romVersion": 23001,
+            "achievement": 1003151
+          },
+          {
+            "musicId": 11382,
+            "level": 3,
+            "romVersion": 23002,
+            "achievement": 1002111
+          },
+          {
+            "musicId": 11516,
+            "level": 3,
+            "romVersion": 23008,
+            "achievement": 998915
+          },
+          {
+            "musicId": 11687,
+            "level": 3,
+            "romVersion": 25000,
+            "achievement": 998647
+          },
+          {
+            "musicId": 11306,
+            "level": 3,
+            "romVersion": 22006,
+            "achievement": 998281
+          },
+          {
+            "musicId": 390,
+            "level": 3,
+            "romVersion": 14002,
+            "achievement": 1001128
+          },
+          {
+            "musicId": 11446,
+            "level": 3,
+            "romVersion": 23001,
+            "achievement": 996675
+          },
+          {
+            "musicId": 773,
+            "level": 3,
+            "romVersion": 19514,
+            "achievement": 990020
+          },
+          {
+            "musicId": 606,
+            "level": 3,
+            "romVersion": 18019,
+            "achievement": 1003908
+          },
+          {
+            "musicId": 11575,
+            "level": 3,
+            "romVersion": 23001,
+            "achievement": 1002878
+          },
+          {
+            "musicId": 11610,
+            "level": 3,
+            "romVersion": 24004,
+            "achievement": 1002655
+          },
+          {
+            "musicId": 642,
+            "level": 3,
+            "romVersion": 19012,
+            "achievement": 1001407
+          },
+          {
+            "musicId": 11377,
+            "level": 3,
+            "romVersion": 23000,
+            "achievement": 1000806
+          },
+          {
+            "musicId": 556,
+            "level": 3,
+            "romVersion": 18001,
+            "achievement": 1000294
+          }
+        ],
+        "nextNewRatingList": [
+          {
+            "musicId": 11834,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1003747
+          },
+          {
+            "musicId": 11824,
+            "level": 3,
+            "romVersion": 25502,
+            "achievement": 1002940
+          },
+          {
+            "musicId": 11811,
+            "level": 3,
+            "romVersion": 25502,
+            "achievement": 1002517
+          },
+          {
+            "musicId": 11848,
+            "level": 3,
+            "romVersion": 25501,
+            "achievement": 995066
+          },
+          {
+            "musicId": 10367,
+            "level": 3,
+            "romVersion": 25501,
+            "achievement": 1000138
+          },
+          {
+            "musicId": 10030,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1000013
+          },
+          {
+            "musicId": 11846,
+            "level": 3,
+            "romVersion": 25502,
+            "achievement": 1001877
+          },
+          {
+            "musicId": 11841,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1003257
+          },
+          {
+            "musicId": 11849,
+            "level": 3,
+            "romVersion": 25501,
+            "achievement": 990833
+          },
+          {
+            "musicId": 11840,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1000891
+          },
+          {
+            "musicId": 11872,
+            "level": 3,
+            "romVersion": 25502,
+            "achievement": 1004135
+          },
+          {
+            "musicId": 11836,
+            "level": 4,
+            "romVersion": 25500,
+            "achievement": 1002251
+          },
+          {
+            "musicId": 11851,
+            "level": 3,
+            "romVersion": 25501,
+            "achievement": 1000841
+          },
+          {
+            "musicId": 11843,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1004264
+          },
+          {
+            "musicId": 11813,
+            "level": 3,
+            "romVersion": 25502,
+            "achievement": 984998
+          },
+          {
+            "musicId": 11845,
+            "level": 3,
+            "romVersion": 25502,
+            "achievement": 1003921
+          },
+          {
+            "musicId": 11873,
+            "level": 3,
+            "romVersion": 25502,
+            "achievement": 1001866
+          },
+          {
+            "musicId": 10122,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1001513
+          },
+          {
+            "musicId": 11833,
+            "level": 3,
+            "romVersion": 25500,
+            "achievement": 1000209
+          },
+          {
+            "musicId": 11855,
+            "level": 3,
+            "romVersion": 25501,
+            "achievement": 971298
+          }
+        ],
+        "udemae": {
+          "maxLoseNum": 2,
+          "npcTotalWinNum": 0,
+          "npcTotalLoseNum": 0,
+          "npcMaxWinNum": 0,
+          "npcMaxLoseNum": 0,
+          "npcWinNum": 0,
+          "npcLoseNum": 0,
+          "rate": 0,
+          "classValue": 50010,
+          "maxRate": 0,
+          "maxClassValue": 50010,
+          "totalWinNum": 183,
+          "totalLoseNum": 31,
+          "maxWinNum": 35,
+          "MaxLoseNum": 2,
+          "winNum": 4,
+          "loseNum": 0,
+          "NpcTotalWinNum": 0,
+          "NpcTotalLoseNum": 0,
+          "NpcMaxWinNum": 0,
+          "NpcMaxLoseNum": 0,
+          "NpcWinNum": 0,
+          "NpcLoseNum": 0
+        }
+      }
+    ],
+    "userItemList": [],
+    "userMusicDetailList": [
+      {
+        "musicId": 18,
+        "level": 0,
+        "playCount": 1,
+        "achievement": 1010000,
+        "comboStatus": 4,
+        "syncStatus": 4,
+        "deluxscoreMax": 0,
+        "scoreRank": 13,
+        "extNum1": 0
+      }
+    ],
+    "userCourseList": [],
+    "userFriendSeasonRankingList": [],
+    "userChargeList": [
+      {
+        "chargeId": 1,
+        "stock": 0,
+        "purchaseDate": "2025-12-29 19:29:31",
+        "validDate": "2026-03-29 04:00:00",
+        "extNum1": 0
+      },
+      {
+        "chargeId": 2,
+        "stock": 0,
+        "purchaseDate": "2026-08-08 16:43:09",
+        "validDate": "2026-11-06 04:00:00",
+        "extNum1": 0
+      },
+      {
+        "chargeId": 3,
+        "stock": 0,
+        "purchaseDate": "2026-07-12 08:57:38",
+        "validDate": "2026-10-10 04:00:00",
+        "extNum1": 0
+      },
+      {
+        "chargeId": 4,
+        "stock": 0,
+        "purchaseDate": "2025-12-29 19:29:52",
+        "validDate": "2026-03-29 04:00:00",
+        "extNum1": 0
+      },
+      {
+        "chargeId": 5,
+        "stock": 0,
+        "purchaseDate": "2025-12-29 19:29:56",
+        "validDate": "2026-03-29 04:00:00",
+        "extNum1": 0
+      },
+      {
+        "chargeId": 6,
+        "stock": 0,
+        "purchaseDate": "2026-06-14 16:24:41",
+        "validDate": "2026-09-12 04:00:00",
+        "extNum1": 0
+      },
+      {
+        "chargeId": 7,
+        "stock": 0,
+        "purchaseDate": "2025-12-21 16:18:03",
+        "validDate": "2026-03-21 04:00:00",
+        "extNum1": 0
+      }
+    ],
+    "userFavoriteList": [],
+    "userActivityList": [
+      {
+        "playList": [
+          {
+            "kind": 1,
+            "id": 25,
+            "sortNumber": 1787056577,
+            "param1": 10301,
+            "param2": 3,
+            "param3": 135,
+            "param4": 0
+          },
+          {
+            "kind": 1,
+            "id": 44,
+            "sortNumber": 1787058697,
+            "param1": 11237,
+            "param2": 3,
+            "param3": 139,
+            "param4": 0
+          },
+          {
+            "kind": 1,
+            "id": 10,
+            "sortNumber": 1787062534,
+            "param1": 0,
+            "param2": 0,
+            "param3": 0,
+            "param4": 0
+          },
+          {
+            "kind": 1,
+            "id": 32,
+            "sortNumber": 1787063937,
+            "param1": 582,
+            "param2": 3,
+            "param3": 133,
+            "param4": 0
+          },
+          {
+            "kind": 1,
+            "id": 25,
+            "sortNumber": 1787130789,
+            "param1": 818,
+            "param2": 4,
+            "param3": 134,
+            "param4": 0
+          },
+          {
+            "kind": 1,
+            "id": 31,
+            "sortNumber": 1787130958,
+            "param1": 146,
+            "param2": 4,
+            "param3": 134,
+            "param4": 0
+          },
+          {
+            "kind": 1,
+            "id": 44,
+            "sortNumber": 1787132501,
+            "param1": 11311,
+            "param2": 3,
+            "param3": 149,
+            "param4": 0
+          },
+          {
+            "kind": 1,
+            "id": 44,
+            "sortNumber": 1787139031,
+            "param1": 11686,
+            "param2": 3,
+            "param3": 146,
+            "param4": 0
+          },
+          {
+            "kind": 1,
+            "id": 44,
+            "sortNumber": 1787141704,
+            "param1": 365,
+            "param2": 3,
+            "param3": 146,
+            "param4": 0
+          },
+          {
+            "kind": 1,
+            "id": 44,
+            "sortNumber": 1787143423,
+            "param1": 11343,
+            "param2": 3,
+            "param3": 139,
+            "param4": 0
+          },
+          {
+            "kind": 1,
+            "id": 44,
+            "sortNumber": 1787145552,
+            "param1": 11444,
+            "param2": 3,
+            "param3": 133,
+            "param4": 0
+          },
+          {
+            "kind": 1,
+            "id": 10,
+            "sortNumber": 1787154518,
+            "param1": 0,
+            "param2": 0,
+            "param3": 0,
+            "param4": 0
+          },
+          {
+            "kind": 1,
+            "id": 31,
+            "sortNumber": 1787155413,
+            "param1": 11444,
+            "param2": 3,
+            "param3": 133,
+            "param4": 0
+          },
+          {
+            "kind": 1,
+            "id": 10,
+            "sortNumber": 1787158977,
+            "param1": 0,
+            "param2": 0,
+            "param3": 0,
+            "param4": 0
+          },
+          {
+            "kind": 1,
+            "id": 25,
+            "sortNumber": 1787159786,
+            "param1": 11464,
+            "param2": 3,
+            "param3": 134,
+            "param4": 0
+          }
+        ],
+        "musicList": [
+          {
+            "kind": 2,
+            "id": 11603,
+            "sortNumber": 1787145254,
+            "param1": 0,
+            "param2": 0,
+            "param3": 0,
+            "param4": 0
+          },
+          {
+            "kind": 2,
+            "id": 11852,
+            "sortNumber": 1787145413,
+            "param1": 0,
+            "param2": 0,
+            "param3": 0,
+            "param4": 0
+          },
+          {
+            "kind": 2,
+            "id": 11444,
+            "sortNumber": 1787155835,
+            "param1": 0,
+            "param2": 0,
+            "param3": 0,
+            "param4": 0
+          },
+          {
+            "kind": 2,
+            "id": 58,
+            "sortNumber": 1787159231,
+            "param1": 0,
+            "param2": 0,
+            "param3": 0,
+            "param4": 0
+          },
+          {
+            "kind": 2,
+            "id": 11504,
+            "sortNumber": 1787159404,
+            "param1": 0,
+            "param2": 0,
+            "param3": 0,
+            "param4": 0
+          },
+          {
+            "kind": 2,
+            "id": 11752,
+            "sortNumber": 1787159609,
+            "param1": 0,
+            "param2": 0,
+            "param3": 0,
+            "param4": 0
+          },
+          {
+            "kind": 2,
+            "id": 11464,
+            "sortNumber": 1787159786,
+            "param1": 0,
+            "param2": 0,
+            "param3": 0,
+            "param4": 0
+          },
+          {
+            "kind": 2,
+            "id": 674,
+            "sortNumber": 1787160145,
+            "param1": 0,
+            "param2": 0,
+            "param3": 0,
+            "param4": 0
+          },
+          {
+            "kind": 2,
+            "id": 11589,
+            "sortNumber": 1787160275,
+            "param1": 0,
+            "param2": 0,
+            "param3": 0,
+            "param4": 0
+          },
+          {
+            "kind": 2,
+            "id": 818,
+            "sortNumber": 1787160403,
+            "param1": 0,
+            "param2": 0,
+            "param3": 0,
+            "param4": 0
+          }
+        ]
+      }
+    ],
+    "userMissionDataList": [],
+    "userWeeklyData": {
+      "userId": 12236556,
+      "lastLoginWeek": "2026-08-17 04:00:00",
+      "beforeLoginWeek": "2026-08-10 04:00:00",
+      "friendBonusFlag": true
+    },
+    "userGamePlaylogList": [
+      {
+        "playlogId": 7676007676450444150,
+        "version": "1.55.00",
+        "playDate": "2026-08-20 15:10:14.0",
+        "playMode": 0,
+        "useTicketId": -1,
+        "playCredit": 1,
+        "playTrack": 1,
+        "clientId": "A63E01C2588",
+        "isPlayTutorial": false,
+        "isEventMode": false,
+        "isNewFree": false,
+        "playCount": 1032,
+        "playSpecial": -1772437500,
+        "playOtherUserId": 0
+      }
+    ],
+    "user2pPlaylog": {
+      "userId1": 0,
+      "userId2": 0,
+      "userName1": "",
+      "userName2": "",
+      "regionId": 0,
+      "placeId": 0,
+      "user2pPlaylogDetailList": []
+    },
+    "userIntimateList": [],
+    "userShopItemStockList": [],
+    "userGetPointList": [],
+    "userTradeItemList": [],
+    "userFavoritemusicList": [],
+    "userKaleidxScopeList": [],
+    "isNewCharacterList": "",
+    "isNewMapList": "",
+    "isNewLoginBonusList": "",
+    "isNewItemList": "",
+    "isNewMusicDetailList": "0",
+    "isNewCourseList": "0",
+    "isNewFavoriteList": "",
+    "isNewFriendSeasonRankingList": "",
+    "isNewUserIntimateList": "",
+    "isNewFavoritemusicList": "",
+    "isNewKaleidxScopeList": ""
+  }
+}

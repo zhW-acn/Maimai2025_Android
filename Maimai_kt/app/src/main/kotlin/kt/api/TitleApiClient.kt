@@ -3,6 +3,7 @@ package kt.api
 import kt.config.ClientConfig
 import kt.constants.ApiNames
 import kt.constants.LoginCodes
+import kt.constants.LogoutTypes
 import kt.constants.PayloadKeys
 import kt.error.MaimaiLoginException
 import kt.log.MaimaiLogger
@@ -59,11 +60,17 @@ class TitleApiClient(
         }
     }
 
-    /** 登出当前用户会话。 */
+    /**
+     * 登出当前用户会话。
+     *
+     * type 默认 [LogoutTypes.LOGOUT]（真机抓包实证 UserLogoutApi 就是 type=1）；
+     * 抓源账号快照后要用 [LogoutTypes.TEST_IN]，和 Python 版 `fetch_source_by_qr` 一致。
+     */
     suspend fun logout(
         userId: Long,
         timestamp: Long,
-        cookie: Map<String, String>
+        cookie: Map<String, String>,
+        type: Int = LogoutTypes.LOGOUT,
     ): MutableMap<String, Any?> =
         request(
             ApiNames.USER_LOGOUT,
@@ -74,7 +81,7 @@ class TitleApiClient(
                 PayloadKeys.PLACE_ID to config.placeId,
                 PayloadKeys.CLIENT_ID to config.clientId,
                 PayloadKeys.DATE_TIME to timestamp,
-                PayloadKeys.TYPE to 1,
+                PayloadKeys.TYPE to type,
             ),
             userId,
             cookie,
@@ -125,11 +132,16 @@ class TitleApiClient(
             cookie,
         )
 
-    /** 提交完整 UserAll。 */
+    /**
+     * 提交完整 UserAll。
+     *
+     * [beforeSend] 在冷却等待结束、真正发出 POST 之前调用一次（迁移用它把请求 JSON 留底）。
+     */
     suspend fun upsertUserAll(
         userId: Long,
         payload: Map<String, Any?>,
-        cookie: Map<String, String>
+        cookie: Map<String, String>,
+        beforeSend: suspend () -> Unit = {},
     ): MutableMap<String, Any?> {
         waitBeforePostWithCountdown(
             waitMillis = config.currentWaitBeforeUpsertMillis(),
@@ -137,6 +149,7 @@ class TitleApiClient(
             logger = logger,
             observer = config.postDelayObserver,
         )
+        beforeSend()
         return request(ApiNames.UPSERT_USER_ALL, payload, userId, cookie)
     }
 
@@ -169,3 +182,12 @@ private fun Map<String, Any?>.loginCode(): Int =
             null
         }
     } ?: LoginCodes.SUCCESS
+
+/**
+ * 登录响应换发的新 token（`UserLoginApi` 响应里的 `token`）。
+ *
+ * ★ 服务端每次登录都会换发，二维码里那个用过一次就作废 —— 续关登录要用这一个。
+ *   响应里没带（或为空）时返回 null，让调用方退回原 token。
+ */
+internal fun Map<String, Any?>.tokenOrNull(): String? =
+    get(PayloadKeys.TOKEN)?.toString()?.takeIf { it.isNotBlank() }

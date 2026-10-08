@@ -13,6 +13,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var techFragment: TechFragment
     private lateinit var divingFishUploadFragment: DivingFishUploadFragment
+    private lateinit var reincarnateFragment: ReincarnateFragment
     private var selectedTabId = R.id.tab_tech
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +55,9 @@ class MainActivity : AppCompatActivity() {
         divingFishUploadFragment =
             supportFragmentManager.findFragmentByTag(DivingFishUploadFragment.TAG)
                     as? DivingFishUploadFragment ?: DivingFishUploadFragment.newInstance()
+        reincarnateFragment =
+            supportFragmentManager.findFragmentByTag(ReincarnateFragment.TAG)
+                    as? ReincarnateFragment ?: ReincarnateFragment.newInstance()
 
         val transaction = supportFragmentManager.beginTransaction()
         if (!techFragment.isAdded) {
@@ -66,8 +70,16 @@ class MainActivity : AppCompatActivity() {
                 DivingFishUploadFragment.TAG,
             )
         }
+        if (!reincarnateFragment.isAdded) {
+            transaction.add(
+                R.id.mainFragmentContainer,
+                reincarnateFragment,
+                ReincarnateFragment.TAG,
+            )
+        }
         transaction.hide(techFragment)
         transaction.hide(divingFishUploadFragment)
+        transaction.hide(reincarnateFragment)
         transaction.show(fragmentForTab(selectedTabId))
         transaction.commitNow()
     }
@@ -85,16 +97,16 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .hide(techFragment)
             .hide(divingFishUploadFragment)
+            .hide(reincarnateFragment)
             .show(fragment)
             .commit()
     }
 
-    private fun fragmentForTab(tabId: Int): Fragment =
-        if (tabId == R.id.tab_diving_fish_upload) {
-            divingFishUploadFragment
-        } else {
-            techFragment
-        }
+    private fun fragmentForTab(tabId: Int): Fragment = when (tabId) {
+        R.id.tab_diving_fish_upload -> divingFishUploadFragment
+        R.id.tab_reincarnate -> reincarnateFragment
+        else -> techFragment
+    }
 
     private fun handleIntentAction(intent: Intent?) {
         techFragment.handleNewIntent(intent ?: return)

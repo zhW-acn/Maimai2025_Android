@@ -187,4 +187,100 @@
     <string name="log_diving_fish_account_deleted">已删除水鱼账号：%1$s</string>
     <string name="log_diving_fish_account_empty">暂无已保存的水鱼账号</string>
     <string name="error_diving_fish_account_required">请先填写水鱼账号和密码</string>
+
+    <!-- 账号迁移（转生） -->
+
+    <string name="tab_reincarnate">账号迁移</string>
+    <string name="label_reincarnate_warning">把源账号的全部曲目记录和解锁数据写入目标账号。写入不可撤销，请先用小号试跑。</string>
+    <string name="section_reincarnate_source">源账号数据</string>
+    <string name="section_reincarnate_capture">① 登录抓取源账号</string>
+    <string name="hint_reincarnate_capture">用「源账号」自己的 SGWCMAID 二维码登录，联网抓一份完整快照并保存到本机。抓取期间该账号不能上机。</string>
+    <string name="hint_reincarnate_source_qr">源账号二维码</string>
+    <string name="action_reincarnate_capture">登录抓取并保存</string>
+    <string name="section_reincarnate_saved">② 已保存的快照</string>
+    <string name="hint_reincarnate_saved_empty">还没有保存过快照。抓取成功后会自动出现在这里。</string>
+    <string name="reincarnate_snapshot_item">%1$d · 曲目 %2$d 条 · %3$s</string>
+    <string name="action_reincarnate_load_snapshot">载入</string>
+    <string name="action_reincarnate_export_snapshot">导出</string>
+    <string name="action_reincarnate_delete_snapshot">删除</string>
+    <string name="action_reincarnate_refresh_snapshots">刷新</string>
+    <string name="section_reincarnate_paste">③ 或直接粘贴 JSON</string>
+    <string name="hint_reincarnate_source">支持 reincarnate.py 用的 data/&lt;uid&gt;.json 原始快照，也支持已经整理好的 upsertUserAll 结构。</string>
+    <string name="hint_reincarnate_source_json">要手动改内容就写在这里（整份 JSON 请走上面的「粘贴 / 导入文件」，几百 KB 塞进输入框会把页面卡死）</string>
+    <string name="action_reincarnate_paste_source">粘贴</string>
+    <string name="action_reincarnate_pick_file">导入文件</string>
+    <string name="action_reincarnate_clear_source">清空</string>
+    <string name="label_reincarnate_active_source">当前源：%1$s（%2$d 字符）</string>
+    <string name="label_reincarnate_active_source_none">当前源：无 —— 请先抓取 / 载入 / 粘贴一份源数据</string>
+    <string name="source_name_input">手动输入框</string>
+    <string name="source_name_snapshot">快照 %1$d</string>
+    <string name="source_name_clipboard">剪贴板</string>
+    <string name="source_name_file">文件 %1$s</string>
+    <string name="reincarnate_source_chars">源数据：%1$d 字符</string>
+    <string name="section_reincarnate_target">目标账号</string>
+    <string name="hint_reincarnate_target">用目标账号的 SGWCMAID 二维码登录，迁移过程中请不要让该账号上机。</string>
+    <string name="action_reincarnate_paste_qr">粘贴二维码</string>
+    <string name="section_reincarnate_options">参数</string>
+    <string name="hint_reincarnate_limit">曲目上限（0 = 全部）</string>
+    <string name="hint_reincarnate_wait">每包间隔秒数（默认 5）</string>
+    <string name="label_reincarnate_per_packet">每包曲目数</string>
+    <string name="label_reincarnate_clone_identity">连 userName / accessCode 一起克隆（默认保留目标账号的）</string>
+    <string-array name="reincarnate_per_packet_options">
+        <item>每包 4 首（默认，最快）</item>
+        <item>每包 3 首</item>
+        <item>每包 1 首（最慢，最稳）</item>
+    </string-array>
+    <string name="action_reincarnate_preview">预览计划</string>
+    <string name="action_reincarnate_start">开始迁移</string>
+    <string name="action_reincarnate_cancel">取消</string>
+    <string name="dialog_reincarnate_confirm_title">确认开始迁移</string>
+    <string name="dialog_reincarnate_confirm_message">%1$s\n\n数据会真实写入目标账号，中途取消也需要手动补完剩余包。确认开始？</string>
+    <string name="dialog_reincarnate_confirm">开始迁移</string>
+    <string name="status_reincarnate_running">迁移进行中</string>
+    <string name="status_reincarnate_capturing">正在抓取源账号快照</string>
+    <string name="reincarnate_capture_progress">正在抓取 %1$s（%2$d/%3$d）</string>
+    <string name="reincarnate_source_summary">源数据：曲目记录 %1$d 条</string>
+    <string name="reincarnate_plan_summary">迁移计划：共 %1$d 包（每包曲目数 %2$s）</string>
+    <string name="reincarnate_plan_preview">计划预览：%1$d 首曲目 -&gt; %2$d 个包</string>
+    <string name="reincarnate_plan_upload">开始迁移：%1$d 首曲目 -&gt; %2$d 个包</string>
+    <string name="reincarnate_wait_text">%1$s：剩余 %2$d 秒</string>
+    <string name="reincarnate_packet_progress">正在上传第 %1$d/%2$d 包（%3$d 首）</string>
+    <string name="reincarnate_packet_start">第 %1$d/%2$d 包开传（%3$d 首）</string>
+    <string name="reincarnate_packet_sent">第 %1$d/%2$d 包已上报</string>
+    <string name="reincarnate_finished">迁移完成：共 %1$d 包、%2$d 首曲目</string>
+    <string name="log_reincarnate_cancel_requested">已请求取消，正在收尾并登出目标账号…</string>
+    <string name="log_reincarnate_cancelled">迁移已取消</string>
+    <string name="log_reincarnate_failed">迁移失败</string>
+    <string name="error_reincarnate_cancelled">用户取消迁移</string>
+    <string name="error_reincarnate_source_required">请先抓取、载入或粘贴一份源账号 JSON</string>
+    <string name="error_reincarnate_source_empty">源数据里没有曲目记录，没什么可迁的</string>
+    <string name="error_reincarnate_source_invalid">源 JSON 解析失败</string>
+    <string name="log_reincarnate_source_from_file">已从文件导入源数据：%1$s（%2$d 字符）</string>
+    <string name="log_reincarnate_source_from_clipboard">已从剪贴板粘贴源数据（%1$d 字符）</string>
+    <string name="log_reincarnate_source_cleared">已清空源数据</string>
+    <string name="log_reincarnate_source_used">本次迁移使用的源：%1$s（曲目 %2$d 条）</string>
+    <string name="log_reincarnate_qr_from_clipboard">已填入剪贴板里的二维码</string>
+    <string name="error_reincarnate_file_read_failed">读取文件失败：%1$s</string>
+    <string name="error_reincarnate_clipboard_empty">剪贴板里没有可粘贴的文本</string>
+    <string name="error_reincarnate_clipboard_qr_missing">剪贴板里没有 SGWCMAID 二维码文本</string>
+    <string name="error_reincarnate_source_qr_required">请先填入源账号二维码</string>
+    <string name="error_reincarnate_snapshot_missing">快照文件不存在或已被删除</string>
+    <string name="error_reincarnate_snapshot_invalid">快照解析失败</string>
+    <string name="error_reincarnate_snapshot_unselected">请先选择一份已保存的快照</string>
+    <string name="error_reincarnate_no_file_picker">本机没有系统「文件」应用（DocumentsUI），打不开选择文件的对话框；请改用「粘贴」导入源 JSON</string>
+    <string name="error_reincarnate_no_save_picker">本机没有系统「文件」应用（DocumentsUI），无法选择导出位置</string>
+    <string name="log_reincarnate_capture_failed">抓取源账号快照失败</string>
+    <string name="log_reincarnate_capture_saved">快照已保存：%1$s（%2$d 字节，曲目 %3$d 条）</string>
+    <string name="log_reincarnate_capture_failed_nodes">有 %1$d 个节点抓取失败（%2$s），迁移时这些节点会跳过</string>
+    <string name="log_reincarnate_snapshot_loaded">已载入快照 %1$d（曲目 %2$d 条）</string>
+    <string name="log_reincarnate_snapshot_deleted">已删除快照 %1$d</string>
+    <string name="log_reincarnate_snapshots_refreshed">已保存的快照：%1$d 份</string>
+    <string name="log_reincarnate_export_ready">已准备导出快照 %1$s，请选择保存位置</string>
+    <string name="error_reincarnate_export_failed">导出失败：无法写入所选位置</string>
+    <string name="log_reincarnate_journal_dir">上传报文记录到：%1$s（每包发出前先写入，文件名为第几次，如 1.json）</string>
+    <string name="log_reincarnate_capture_cancelled">已取消抓取源账号（会话会尽量登出）</string>
+    <string name="dialog_reincarnate_delete_title">删除快照</string>
+    <string name="dialog_reincarnate_delete_message">确定删除本机保存的快照 %1$d 吗？删除后需要重新登录抓取。</string>
+    <string name="dialog_reincarnate_delete_confirm">删除</string>
+    <string name="label_reincarnate_saved_count">已保存快照</string>
 </resources>

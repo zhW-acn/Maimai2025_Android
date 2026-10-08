@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/tab_reincarnate"
+            android:textColor="@color/console_title_text"
+            android:textSize="22sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/label_reincarnate_warning"
+            android:textColor="@color/console_subtitle_text"
+            android:textSize="13sp" />
+
+        <!-- 源账号：① 登录抓取 -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/section_reincarnate_source"
+            style="@style/ConsoleSectionTitle" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:text="@string/section_reincarnate_capture"
+            android:textColor="@color/console_title_text"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/hint_reincarnate_capture"
+            android:textColor="@color/console_subtitle_text"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/sourceQrInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:hint="@string/hint_reincarnate_source_qr"
+                android:inputType="text"
+                android:singleLine="true" />
+
+            <Button
+                android:id="@+id/pasteSourceQrButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/action_reincarnate_paste_qr" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/captureSourceButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/action_reincarnate_capture" />
+
+        <TextView
+            android:id="@+id/captureProgressText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/console_subtitle_text"
+            android:textSize="13sp" />
+
+        <!-- 源账号：② 已保存的快照 -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginStart="10dp"
+            android:text="@string/section_reincarnate_saved"
+            android:textColor="@color/console_title_text"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/savedEmptyText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/hint_reincarnate_saved_empty"
+            android:textColor="@color/console_subtitle_text"
+            android:textSize="13sp" />
+
+        <Spinner
+            android:id="@+id/savedSnapshotSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="6dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="6dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/loadSnapshotButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:text="@string/action_reincarnate_load_snapshot" />
+
+            <Button
+                android:id="@+id/exportSnapshotButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:text="@string/action_reincarnate_export_snapshot" />
+
+            <Button
+                android:id="@+id/deleteSnapshotButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:text="@string/action_reincarnate_delete_snapshot" />
+
+            <Button
+                android:id="@+id/refreshSnapshotsButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/action_reincarnate_refresh_snapshots" />
+        </LinearLayout>
+
+        <!-- 源账号：③ 或直接粘贴 JSON -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginStart="10dp"
+            android:text="@string/section_reincarnate_paste"
+            android:textColor="@color/console_title_text"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/hint_reincarnate_source"
+            android:textColor="@color/console_subtitle_text"
+            android:textSize="13sp" />
+
+        <EditText
+            android:id="@+id/sourceJsonInput"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp"
+            android:gravity="top|start"
+            android:hint="@string/hint_reincarnate_source_json"
+            android:inputType="textMultiLine"
+            android:textSize="12sp"
+            android:typeface="monospace" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/pasteSourceButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:text="@string/action_reincarnate_paste_source" />
+
+            <Button
+                android:id="@+id/pickSourceFileButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:text="@string/action_reincarnate_pick_file" />
+
+            <Button
+                android:id="@+id/clearSourceButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/action_reincarnate_clear_source" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/activeSourceText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/console_title_text"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/sourceSummaryText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/console_subtitle_text"
+            android:textSize="13sp" />
+
+        <!-- 目标账号 -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/section_reincarnate_target"
+            style="@style/ConsoleSectionTitle" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hint_reincarnate_target"
+            android:textColor="@color/console_subtitle_text"
+            android:textSize="13sp" />
+
+        <EditText
+            android:id="@+id/targetQrInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/hint_qrcode"
+            android:inputType="text"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/pasteQrButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/action_reincarnate_paste_qr" />
+
+        <!-- 参数 -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/section_reincarnate_options"
+            style="@style/ConsoleSectionTitle" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/limitInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:hint="@string/hint_reincarnate_limit"
+                android:inputType="number"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/waitInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/hint_reincarnate_wait"
+                android:inputType="numberDecimal"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_reincarnate_per_packet"
+            android:textColor="@color/console_subtitle_text"
+            android:textSize="14sp" />
+
+        <Spinner
+            android:id="@+id/perPacketSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/reincarnate_per_packet_options" />
+
+        <CheckBox
+            android:id="@+id/cloneIdentityCheck"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_reincarnate_clone_identity" />
+
+        <!-- 执行 -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/previewButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="@string/action_reincarnate_preview" />
+
+            <Button
+                android:id="@+id/startButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="@string/action_reincarnate_start" />
+
+            <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:layout_weight="1"
+                android:text="@string/action_reincarnate_cancel" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/busyProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:indeterminate="true"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/console_subtitle_text"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/planSummaryText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/console_subtitle_text"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/packetText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/console_subtitle_text"
+            android:textSize="13sp" />
+
+        <ProgressBar
+            android:id="@+id/waitProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:max="100" />
+
+        <TextView
+            android:id="@+id/waitText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/console_subtitle_text"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/errorText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="13sp" />
+
+        <!-- 日志 -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/section_logs"
+                style="@style/ConsoleSectionTitle" />
+
+            <Button
+                android:id="@+id/clearLogsButton"
+                android:layout_width="96dp"
+                android:layout_height="wrap_content"
+                android:text="@string/action_clear" />
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/logsScroll"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/console_logs_background"
+            android:fillViewport="true">
+
+            <TextView
+                android:id="@+id/logsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:textColor="@color/console_logs_text"
+                android:textIsSelectable="true"
+                android:textSize="12sp"
+                android:typeface="monospace" />
+        </ScrollView>
+    </LinearLayout>
+</ScrollView>

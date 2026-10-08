@@ -4,7 +4,7 @@ package kt.constants
  * 舞里程
  */
 object Point {
-    const val MAX = 99_9999
+    const val MAX = 99999
     const val MIN = 0
 }
 
