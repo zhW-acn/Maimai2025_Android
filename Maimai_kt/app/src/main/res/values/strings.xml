@@ -236,6 +236,8 @@
     <string name="dialog_reincarnate_confirm_title">确认开始迁移</string>
     <string name="dialog_reincarnate_confirm_message">%1$s\n\n数据会真实写入目标账号，中途取消也需要手动补完剩余包。确认开始？</string>
     <string name="dialog_reincarnate_confirm">开始迁移</string>
+    <string name="reincarnate_resume_folder">沿用上次的上传记录 %1$s（已成功的包跳过）</string>
+    <string name="reincarnate_resume_new">该账号还没有上传记录，将新建一份</string>
     <string name="status_reincarnate_running">迁移进行中</string>
     <string name="status_reincarnate_capturing">正在抓取源账号快照</string>
     <string name="reincarnate_capture_progress">正在抓取 %1$s（%2$d/%3$d）</string>

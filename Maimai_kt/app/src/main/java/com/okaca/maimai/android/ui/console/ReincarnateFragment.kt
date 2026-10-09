@@ -358,19 +358,30 @@ class ReincarnateFragment : Fragment() {
         viewModel.saveInputs(inputs)
         val options = options(inputs)
         viewModel.preview(inputs.sourceJson, options)
-        val state = viewModel.state.value
-        if (state.lastError != null) {
+        if (viewModel.state.value.lastError != null) {
             return
         }
 
-        AlertDialog.Builder(requireContext())
-            .setTitle(R.string.dialog_reincarnate_confirm_title)
-            .setMessage(getString(R.string.dialog_reincarnate_confirm_message, state.planSummary))
-            .setPositiveButton(R.string.dialog_reincarnate_confirm) { _, _ ->
-                viewModel.start(inputs.sourceJson, inputs.targetQr, options)
-            }
-            .setNegativeButton(R.string.dialog_cancel, null)
-            .show()
+        lifecycleScope.launch {
+            val target = viewModel.resolveTarget(inputs.targetQr) ?: return@launch
+            val resumeHint = target.lastFolder
+                ?.let { getString(R.string.reincarnate_resume_folder, it) }
+                ?: getString(R.string.reincarnate_resume_new)
+            val planSummary = viewModel.state.value.planSummary
+            AlertDialog.Builder(requireContext())
+                .setTitle(R.string.dialog_reincarnate_confirm_title)
+                .setMessage(
+                    getString(
+                        R.string.dialog_reincarnate_confirm_message,
+                        "$planSummary\n$resumeHint"
+                    )
+                )
+                .setPositiveButton(R.string.dialog_reincarnate_confirm) { _, _ ->
+                    viewModel.start(inputs.sourceJson, inputs.targetQr, options, target)
+                }
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .show()
+        }
     }
 
     private fun pickSourceFile() {

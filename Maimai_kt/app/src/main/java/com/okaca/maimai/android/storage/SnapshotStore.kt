@@ -45,13 +45,32 @@ class SnapshotStore @Inject constructor(
     /** 一份快照对应的文件。 */
     fun fileFor(uid: Long): File = File(directory, "$uid.json")
 
+    /** 账号 [userId] 的上传记录目录（`data/<userId>`），下面每次迁移一个时间戳子目录。 */
+    private fun journalRootOf(userId: Long): File = File(directory, userId.toString())
+
     /**
-     * 新开一次上传的报文记录，目录名取当前时间，和 `data/<userId>.json` 放在同一个根目录下。
+     * 新开一次上传的报文记录，目录名取当前时间，记在目标账号的目录下。
      *
      * 目录在第一次记录时才创建，没发出任何一包就不会留下空目录。
      */
-    fun newUploadJournal(): FileUploadJournal =
-        FileUploadJournal(File(directory, LocalDateTime.now().format(FOLDER_STAMP)))
+    fun newUploadJournal(userId: Long): FileUploadJournal =
+        FileUploadJournal(File(journalRootOf(userId), LocalDateTime.now().format(FOLDER_STAMP)))
+
+    /** 目标账号最近一次上传记录的目录名（时间戳名字可直接比大小）；没有返回 null。 */
+    suspend fun latestUploadFolder(userId: Long): String? = withContext(Dispatchers.IO) {
+        journalRootOf(userId)
+            .listFiles { file -> file.isDirectory && FOLDER_NAME.matches(file.name) }
+            ?.maxByOrNull { it.name }
+            ?.name
+    }
+
+    /** 续传：打开账号下已有的上传记录目录；目录名不合法或不存在直接报错，不新建。 */
+    fun resumeUploadJournal(userId: Long, folder: String): FileUploadJournal {
+        require(FOLDER_NAME.matches(folder)) { "非法的上传记录目录名：$folder" }
+        val target = File(journalRootOf(userId), folder)
+        require(target.isDirectory) { "找不到上传记录目录：$folder" }
+        return FileUploadJournal(target)
+    }
 
     /**
      * 覆盖写入一份快照。
@@ -142,6 +161,7 @@ class SnapshotStore @Inject constructor(
 
         /** 上传报文目录名：开始迁移的时间，如 `20261008-143005`。 */
         val FOLDER_STAMP: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")
+        val FOLDER_NAME = Regex("""\d{8}-\d{6}""")
 
         /** 缩进输出，对齐 Python 的 `json.dump(..., indent=2)`。 */
         val PRETTY_WRITER: ObjectWriter =

@@ -352,8 +352,34 @@ class ReincarnateViewModel @Inject constructor(
         }
     }
 
-    /** 真正开始迁移（会写入目标账号）。[manualJson] 同 [preview]。 */
-    fun start(manualJson: String, targetQr: String, options: ReincarnateOptions) {
+    /**
+     * 确认开始前解析目标账号：只解析二维码、不登录，再找该账号最近一次的上传记录目录。
+     *
+     * 解析失败时写错误并返回 null（此时不该弹确认框）。
+     */
+    suspend fun resolveTarget(targetQr: String): ResumeTarget? {
+        if (targetQr.isBlank()) {
+            setError(text(R.string.error_qrcode_required))
+            return null
+        }
+        return try {
+            val userId = actions.sessions.resolveByQr(targetQr, fetchPreview = false).userId
+            ResumeTarget(userId, snapshots.latestUploadFolder(userId))
+        } catch (error: CancellationException) {
+            throw error
+        } catch (error: Throwable) {
+            setError(error.message ?: error::class.java.simpleName)
+            null
+        }
+    }
+
+    /** 真正开始迁移（会写入目标账号）。[manualJson] 同 [preview]，[target] 来自 [resolveTarget]。 */
+    fun start(
+        manualJson: String,
+        targetQr: String,
+        options: ReincarnateOptions,
+        target: ResumeTarget,
+    ) {
         if (state.value.running) {
             return
         }
@@ -376,7 +402,9 @@ class ReincarnateViewModel @Inject constructor(
                 )
             }
             try {
-                val journal = snapshots.newUploadJournal()
+                val journal =
+                    target.lastFolder?.let { snapshots.resumeUploadJournal(target.userId, it) }
+                        ?: snapshots.newUploadJournal(target.userId)
                 appendLog(
                     text(
                         R.string.log_reincarnate_journal_dir,
@@ -554,3 +582,6 @@ class ReincarnateViewModel @Inject constructor(
         const val PLAN_PREVIEW_BATCHES = 12
     }
 }
+
+/** 目标账号 B 的解析结果；[lastFolder] 是它最近一次上传记录的目录名，没有则为 null。 */
+data class ResumeTarget(val userId: Long, val lastFolder: String?)

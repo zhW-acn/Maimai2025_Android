@@ -10,9 +10,12 @@ import kt.payload.CharaDetail
 import kt.payload.MusicDetail
 import kt.payload.SnapshotNormalizer
 import kt.payload.UserAllBuilder
+import kt.payload.asIntValue
+import kt.payload.asLongValue
 import kt.payload.calcPlaySpecial
 import kt.payload.mergePatch
 import kt.transport.JsonSupport
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -104,7 +107,25 @@ class ReincarnateService(
 
             val builder = UserAllBuilder(api.config)
 
-            batches.forEachIndexed { index, batch ->
+            for ((index, batch) in batches.withIndex()) {
+                val sequence = index + 1
+                val previous = journal.load(sequence)
+                if (previous != null && previous.status == UPLOAD_STATUS_SUCCESS) {
+                    if (!previous.matches(session.userId, batch)) {
+                        throw IllegalStateException(
+                            "第 $sequence 包的留底与当前目标账号或分包不一致，停止续传"
+                        )
+                    }
+                    listener.onLog("第 $sequence/${batches.size} 包已成功上传过，跳过")
+                    continue
+                }
+                if (previous != null) {
+                    throw IllegalStateException(
+                        "第 $sequence 包留底状态为 ${previous.status ?: "未知"}，服务端结果不确定，" +
+                                "请先核对账号 B 后再续传（不会自动重发）"
+                    )
+                }
+
                 listener.onPacketStart(index, batches.size, batch.size)
                 val ids = batch.joinToString(", ") { "${it.musicId}/L${it.level}" }
                 listener.onLog("    曲目 $ids")
@@ -141,10 +162,23 @@ class ReincarnateService(
                 mergePatch(userAll, mapOf(PayloadKeys.UPSERT_USER_ALL to packetNodes))
 
                 // ★ 报文先留底再发：POST 之前写入，发出去的每一包都有对应的 N.json
-                api.upsertUserAll(session.userId, userAll, session.cookie) {
-                    journal.record(index + 1, userAll)
-                    listener.onLog("    已记录上传报文 ${index + 1}.json")
+                var journaled = false
+                val response = try {
+                    api.upsertUserAll(session.userId, userAll, session.cookie) {
+                        journal.record(sequence, userAll)
+                        journaled = true
+                        listener.onLog("    已记录上传报文 $sequence.json")
+                    }
+                } catch (error: Throwable) {
+                    if (journaled) {
+                        withContext(NonCancellable) {
+                            runCatching { journal.finish(sequence, uploadFailure(error)) }
+                                .onFailure { error.addSuppressed(it) }
+                        }
+                    }
+                    throw error
                 }
+                withContext(NonCancellable) { journal.finish(sequence, uploadResult(response)) }
                 listener.onPacketSent(index, batches.size)
 
                 // ---- ★ 登出（type=1 Logout）----
@@ -584,14 +618,58 @@ data class ReincarnateResult(
 )
 
 /**
- * 每包 UpsertUserAll 发出前的报文留底（断点续传用）。
+ * 每包 UpsertUserAll 的报文留底（断点续传用）。
  *
  * ★ [sequence] 从 1 开始，与包序一致；[payload] 就是即将 POST 的请求体。
- *   抛异常 = 这一包不发，迁移随之中止。
+ *   抛异常 = 这一包不发，迁移随之中止。[finish] 把 POST 结果写到文件第一行（`{"_result":{...},`）。
  */
 interface UpsertJournal {
     suspend fun record(sequence: Int, payload: Map<String, Any?>)
+    suspend fun finish(sequence: Int, result: Map<String, Any?>)
+
+    /** 第 [sequence] 包的留底；没有该文件返回 null。 */
+    suspend fun load(sequence: Int): JournalEntry?
 }
+
+/**
+ * 留底里的一包：[status] 来自 `_result.status`；没有 `_result` 行时为 null，表示结果未知。
+ */
+data class JournalEntry(
+    val status: String?,
+    val payload: Map<String, Any?>,
+) {
+    /** 留底是否属于本次目标账号，且曲目与 [batch] 逐条一致（musicId / level 顺序相同）。 */
+    fun matches(userId: Long, batch: List<MusicDetail>): Boolean {
+        if (payload[PayloadKeys.USER_ID].asLongValue() != userId) return false
+        val recorded = (payload[PayloadKeys.UPSERT_USER_ALL] as? Map<*, *>)
+            ?.get(PayloadKeys.USER_MUSIC_DETAIL_LIST) as? List<*> ?: return false
+        if (recorded.size != batch.size) return false
+        return recorded.zip(batch).all { (raw, music) ->
+            val map = raw as? Map<*, *> ?: return@all false
+            map[PayloadKeys.MUSIC_ID].asIntValue() == music.musicId &&
+                    map[PayloadKeys.LEVEL].asIntValue() == music.level
+        }
+    }
+}
+
+private const val UPLOAD_STATUS_SUCCESS = "success"
+
+private const val UPSERT_SUCCESS_CODE = 1
+
+private fun uploadResult(response: Map<String, Any?>): Map<String, Any?> {
+    val code = (response[PayloadKeys.RETURN_CODE] as? Number)?.toInt()
+    return mapOf(
+        "status" to if (code == UPSERT_SUCCESS_CODE) "success" else "rejected",
+        "returnCode" to code,
+        "response" to response,
+    )
+}
+
+private fun uploadFailure(error: Throwable): Map<String, Any?> = mapOf(
+    "status" to if (error is CancellationException) "cancelled" else "error",
+    "exception" to error::class.java.name,
+    "message" to error.message,
+)
 
 /** 迁移过程回调，UI 靠它刷新日志和进度。 */
 interface ReincarnateListener {
